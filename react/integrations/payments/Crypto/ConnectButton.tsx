@@ -1,0 +1,1 @@
+// Hamyonni ulash tugmasi.

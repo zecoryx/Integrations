@@ -1,0 +1,1 @@
+// Code ni Tokenga almashtirish so'rovi.s

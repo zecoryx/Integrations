@@ -1,0 +1,1 @@
+// Matnni ovozga aylantirib o'qib berish.

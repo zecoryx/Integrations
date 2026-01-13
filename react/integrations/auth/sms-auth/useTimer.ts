@@ -1,0 +1,1 @@
+// 2 daqiqalik teskari sanoq.

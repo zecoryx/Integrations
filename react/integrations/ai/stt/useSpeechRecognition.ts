@@ -1,0 +1,1 @@
+// Mikrofonni eshitish va matnga aylantirish hooki.

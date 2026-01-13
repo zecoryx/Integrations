@@ -1,0 +1,1 @@
+// OpenAI API ga so‘rov yuborish (stream yoki oddiy).

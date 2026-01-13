@@ -1,0 +1,1 @@
+// Koordinata tiplari.

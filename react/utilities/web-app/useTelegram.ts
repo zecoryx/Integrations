@@ -1,0 +1,1 @@
+// Telegram obyektini olish hooki.

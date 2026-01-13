@@ -1,0 +1,1 @@
+// Eskiz API javob turlari.

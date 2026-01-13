@@ -1,0 +1,1 @@
+// 4 xonali kod kiritish poliyasi (UI).

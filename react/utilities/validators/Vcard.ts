@@ -1,0 +1,1 @@
+// Humo/Uzcard validatsiyasi. Karta turini aniqlash.

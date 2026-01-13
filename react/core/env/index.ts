@@ -1,0 +1,1 @@
+// Barcha process.env o‘zgaruvchilar shu yerdan o‘qiladi.

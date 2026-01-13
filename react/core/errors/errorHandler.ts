@@ -1,0 +1,1 @@
+// Xatolarni chiroyli qilib ko'rsatish funksiyasi.

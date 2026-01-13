@@ -1,0 +1,1 @@
+<!-- Merchant ID qayerga qo‘yilishi haqida. -->

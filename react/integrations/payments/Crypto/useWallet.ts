@@ -1,0 +1,1 @@
+// MetaMask yoki TrustWalletga ulash.

@@ -1,0 +1,1 @@
+// React hook (yozishma tarixi, loading holati).

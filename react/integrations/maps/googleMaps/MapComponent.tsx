@@ -1,0 +1,1 @@
+// Xaritani chizish komponenti.

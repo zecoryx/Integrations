@@ -1,0 +1,1 @@
+// Appni o‘rash uchun provider.

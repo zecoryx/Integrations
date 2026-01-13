@@ -1,0 +1,1 @@
+// Lokatsiyani aniqlash va marker qo‘yish.

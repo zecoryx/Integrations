@@ -1,0 +1,1 @@
+// To‘lov linkini (base64) generatsiya qilish.
