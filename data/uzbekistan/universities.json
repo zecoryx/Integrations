@@ -1,0 +1,752 @@
+[
+  {
+    "web_pages": ["https://nuu.uz/"],
+    "name_uz": "O‘zbekiston Milliy universiteti",
+    "name_ru": "Национальный университет Узбекистана",
+    "name_en": "National University of Uzbekistan",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["nuu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tdtu.uz/"],
+    "name_uz": "Toshkent davlat texnika universiteti",
+    "name_ru": "Ташкентский государственный технический университет",
+    "name_en": "Tashkent State Technical University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tdtu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tuit.uz/"],
+    "name_uz": "Toshkent axborot texnologiyalari universiteti",
+    "name_ru": "Ташкентский университет информационных технологий",
+    "name_en": "Tashkent University of Information Technologies",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tuit.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tsue.uz/"],
+    "name_uz": "Toshkent davlat iqtisodiyot universiteti",
+    "name_ru": "Ташкентский государственный экономический университет",
+    "name_en": "Tashkent State University of Economics",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tsue.uz", "tdiu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tsul.uz/"],
+    "name_uz": "Toshkent davlat yuridik universiteti",
+    "name_ru": "Ташкентский государственный юридический университет",
+    "name_en": "Tashkent State University of Law",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tsul.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://uzswlu.uz/"],
+    "name_uz": "O‘zbekiston davlat jahon tillari universiteti",
+    "name_ru": "Узбекский государственный университет мировых языков",
+    "name_en": "Uzbekistan State World Languages University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["uzswlu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://uwed.uz/"],
+    "name_uz": "Jahon iqtisodiyoti va diplomatiya universiteti",
+    "name_ru": "Университет мировой экономики и дипломатии",
+    "name_en": "University of World Economy and Diplomacy",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["uwed.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tdpu.uz/"],
+    "name_uz": "Toshkent davlat pedagogika universiteti (Nizomiy nomidagi)",
+    "name_ru": "Ташкентский государственный педагогический университет имени Низами",
+    "name_en": "Tashkent State Pedagogical University named after Nizami",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tdpu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tstu.uz/"],
+    "name_uz": "Toshkent davlat transport universiteti",
+    "name_ru": "Ташкентский государственный транспортный университет",
+    "name_en": "Tashkent State Transport University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tstu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://taqi.uz/"],
+    "name_uz": "Toshkent arxitektura-qurilish universiteti",
+    "name_ru": "Ташкентский архитектурно-строительный университет",
+    "name_en": "Tashkent University of Architecture and Civil Engineering",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["taqi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tcti.uz/"],
+    "name_uz": "Toshkent kimyo-texnologiya instituti",
+    "name_ru": "Ташкентский химико-технологический институт",
+    "name_en": "Tashkent Institute of Chemical Technology",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tcti.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://ttyesi.uz/"],
+    "name_uz": "Toshkent to‘qimachilik va yengil sanoat instituti",
+    "name_ru": "Ташкентский институт текстильной и легкой промышленности",
+    "name_en": "Tashkent Institute of Textile and Light Industry",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["ttyesi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tma.uz/"],
+    "name_uz": "Toshkent tibbiyot akademiyasi",
+    "name_ru": "Ташкентская медицинская академия",
+    "name_en": "Tashkent Medical Academy",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tma.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tpm.uz/"],
+    "name_uz": "Toshkent pediatriya tibbiyot instituti (SamPI)",
+    "name_ru": "Ташкентский педиатрический медицинский институт",
+    "name_en": "Tashkent Pediatric Medical Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tpm.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tsdi.uz/"],
+    "name_uz": "Toshkent davlat stomatologiya instituti",
+    "name_ru": "Ташкентский государственный стоматологический институт",
+    "name_en": "Tashkent State Dental Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tsdi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://pharmi.uz/"],
+    "name_uz": "Toshkent farmatsevtika instituti",
+    "name_ru": "Ташкентский фармацевтический институт",
+    "name_en": "Tashkent Pharmaceutical Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["pharmi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://navoiy-uni.uz/"],
+    "name_uz": "Alisher Navoiy nomidagi Toshkent davlat o‘zbek tili va adabiyoti universiteti",
+    "name_ru": "Ташкентский государственный университет узбекского языка и литературы имени Алишера Навои",
+    "name_en": "Tashkent State University of Uzbek Language and Literature named after Alisher Navoiy",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["navoiy-uni.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://dsmi.uz/"],
+    "name_uz": "O‘zbekiston davlat san’at va madaniyat instituti",
+    "name_ru": "Государственный институт искусств и культуры Узбекистана",
+    "name_en": "Uzbekistan State Institute of Arts and Culture",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["dsmi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://inha.uz/"],
+    "name_uz": "Toshkent shahridagi Inha universiteti",
+    "name_ru": "Университет Инха в Ташкенте",
+    "name_en": "Inha University in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["inha.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://wiut.uz/"],
+    "name_uz": "Toshkent shahridagi Xalqaro Vestminster universiteti",
+    "name_ru": "Международный Вестминстерский университет в Ташкенте",
+    "name_en": "Westminster International University in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["wiut.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://mdis.uz/"],
+    "name_uz": "Toshkent shahridagi Singapur menejmentni rivojlantirish instituti",
+    "name_ru": "Сингапурский институт развития менеджмента в Ташкенте",
+    "name_en": "Management Development Institute of Singapore in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["mdis.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://polito.uz/"],
+    "name_uz": "Toshkent shahridagi Turin politexnika universiteti",
+    "name_ru": "Туринский политехнический университет в Ташкенте",
+    "name_en": "Turin Polytechnic University in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["polito.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://amity.uz/"],
+    "name_uz": "Toshkent shahridagi Amity universiteti",
+    "name_ru": "Университет Амити в Ташкенте",
+    "name_en": "Amity University in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["amity.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://webster.uz/"],
+    "name_uz": "Toshkent shahridagi Vebster universiteti",
+    "name_ru": "Университет Вебстер в Ташкенте",
+    "name_en": "Webster University in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["webster.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://centralasian.uz/"],
+    "name_uz": "Markaziy Osiyo universiteti (sobiq AKFA)",
+    "name_ru": "Центрально-Азиатский университет",
+    "name_en": "Central Asian University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["centralasian.uz", "akfauniversity.org"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://kiut.uz/"],
+    "name_uz": "Toshkent Kimyo xalqaro universiteti (sobiq Yeoju)",
+    "name_ru": "Ташкентский международный университет Кимё",
+    "name_en": "Kimyo International University in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["kiut.uz", "ytit.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://teamuni.uz/"],
+    "name_uz": "TEAM universiteti",
+    "name_ru": "Университет TEAM",
+    "name_en": "TEAM University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["teamuni.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://university.pdp.uz/"],
+    "name_uz": "PDP universiteti",
+    "name_ru": "Университет PDP",
+    "name_en": "PDP University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["university.pdp.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://alfraganus.uz/"],
+    "name_uz": "Alfraganus universiteti",
+    "name_ru": "Университет Alfraganus",
+    "name_en": "Alfraganus University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["alfraganus.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://nordicuniversity.org/"],
+    "name_uz": "Nordik xalqaro universiteti",
+    "name_ru": "Международный северный университет",
+    "name_en": "Nordic International University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["nordicuniversity.org"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://gubkin.uz/"],
+    "name_uz": "I.M.Gubkin nomidagi Rossiya davlat neft va gaz universiteti Toshkent filiali",
+    "name_ru": "Филиал РГУ нефти и газа имени И.М. Губкина в Ташкенте",
+    "name_en": "Branch of Russian State University of Oil and Gas named after I.M. Gubkin",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["gubkin.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://msu.uz/"],
+    "name_uz": "M.V.Lomonosov nomidagi Moskva davlat universiteti Toshkent filiali",
+    "name_ru": "Филиал МГУ имени М.В. Ломоносова в Ташкенте",
+    "name_en": "Branch of Moscow State University named after M.V. Lomonosov",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["msu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://reu.uz/"],
+    "name_uz": "G.V.Plexanov nomidagi Rossiya iqtisodiyot universiteti Toshkent filiali",
+    "name_ru": "Филиал РЭУ имени Г.В. Плеханова в Ташкенте",
+    "name_en": "Branch of Plekhanov Russian University of Economics",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["reu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://mgimo.uz/"],
+    "name_uz": "MGIMO Toshkent filiali",
+    "name_ru": "Филиал МГИМО в Ташкенте",
+    "name_en": "Branch of MGIMO in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["mgimo.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://agrar.uz/"],
+    "name_uz": "Toshkent davlat agrar universiteti",
+    "name_ru": "Ташкентский государственный аграрный университет",
+    "name_en": "Tashkent State Agrarian University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["agrar.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tiiame.uz/"],
+    "name_uz": "“Toshkent irrigatsiya va qishloq xo'jaligini mexanizatsiyalash muhandislari instituti” Milliy tadqiqot universiteti",
+    "name_ru": "НИУ «Ташкентский институт инженеров ирригации и механизации сельского хозяйства»",
+    "name_en": "Tashkent Institute of Irrigation and Agricultural Mechanization Engineers",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tiiame.uz", "tiim.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tsos.uz/"],
+    "name_uz": "Toshkent davlat sharqshunoslik universiteti",
+    "name_ru": "Ташкентский государственный университет востоковедения",
+    "name_en": "Tashkent State University of Oriental Studies",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tsos.uz", "tashgiv.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tfi.uz/"],
+    "name_uz": "Toshkent moliya instituti",
+    "name_ru": "Ташкентский финансовый институт",
+    "name_en": "Tashkent Institute of Finance",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tfi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://samdu.uz/"],
+    "name_uz": "Samarqand davlat universiteti",
+    "name_ru": "Самаркандский государственный университет",
+    "name_en": "Samarkand State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Samarkand",
+    "domains": ["samdu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://sammu.uz/"],
+    "name_uz": "Samarqand davlat tibbiyot universiteti",
+    "name_ru": "Самаркандский государственный медицинский университет",
+    "name_en": "Samarkand State Medical University",
+    "alpha_two_code": "UZ",
+    "state-province": "Samarkand",
+    "domains": ["sammu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://samdchti.uz/"],
+    "name_uz": "Samarqand davlat chet tillar instituti",
+    "name_ru": "Самаркандский государственный институт иностранных языков",
+    "name_en": "Samarkand State Institute of Foreign Languages",
+    "alpha_two_code": "UZ",
+    "state-province": "Samarkand",
+    "domains": ["samdchti.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://samdaqi.uz/"],
+    "name_uz": "Samarqand davlat arxitektura-qurilish universiteti",
+    "name_ru": "Самаркандский государственный архитектурно-строительный университет",
+    "name_en": "Samarkand State Architecture and Civil Engineering University",
+    "alpha_two_code": "UZ",
+    "state-province": "Samarkand",
+    "domains": ["samdaqi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://sies.uz/"],
+    "name_uz": "Samarqand iqtisodiyot va servis instituti",
+    "name_ru": "Самаркандский институт экономики и сервиса",
+    "name_en": "Samarkand Institute of Economics and Service",
+    "alpha_two_code": "UZ",
+    "state-province": "Samarkand",
+    "domains": ["sies.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://univ-silkroad.uz/"],
+    "name_uz": "“Ipak yo‘li” turizm va madaniy meros xalqaro universiteti",
+    "name_ru": "Международный университет туризма и культурного наследия «Шелковый путь»",
+    "name_en": "Silk Road International University of Tourism and Cultural Heritage",
+    "alpha_two_code": "UZ",
+    "state-province": "Samarkand",
+    "domains": ["silkworm.uz", "univ-silkroad.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://buxdu.uz/"],
+    "name_uz": "Buxoro davlat universiteti",
+    "name_ru": "Бухарский государственный университет",
+    "name_en": "Bukhara State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Bukhara",
+    "domains": ["buxdu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://bsmi.uz/"],
+    "name_uz": "Buxoro davlat tibbiyot instituti",
+    "name_ru": "Бухарский государственный медицинский институт",
+    "name_en": "Bukhara State Medical Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Bukhara",
+    "domains": ["bsmi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://bmti.uz/"],
+    "name_uz": "Buxoro muhandislik-texnologiya instituti",
+    "name_ru": "Бухарский инженерно-технологический институт",
+    "name_en": "Bukhara Engineering-Technological Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Bukhara",
+    "domains": ["bmti.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://adu.uz/"],
+    "name_uz": "Andijon davlat universiteti",
+    "name_ru": "Андижанский государственный университет",
+    "name_en": "Andijan State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Andijan",
+    "domains": ["adu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://adti.uz/"],
+    "name_uz": "Andijon davlat tibbiyot instituti",
+    "name_ru": "Андижанский государственный медицинский институт",
+    "name_en": "Andijan State Medical Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Andijan",
+    "domains": ["adti.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://andmiedu.uz/"],
+    "name_uz": "Andijon mashinasozlik instituti",
+    "name_ru": "Андижанский машиностроительный институт",
+    "name_en": "Andijan Machine-Building Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Andijan",
+    "domains": ["andmiedu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://fdu.uz/"],
+    "name_uz": "Farg‘ona davlat universiteti",
+    "name_ru": "Ферганский государственный университет",
+    "name_en": "Fergana State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Fergana",
+    "domains": ["fdu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://ferpi.uz/"],
+    "name_uz": "Farg‘ona politexnika instituti",
+    "name_ru": "Ферганский политехнический институт",
+    "name_en": "Fergana Polytechnic Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Fergana",
+    "domains": ["ferpi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://fjti.uz/"],
+    "name_uz": "Farg‘ona jamoat salomatligi tibbiyot instituti",
+    "name_ru": "Ферганский медицинский институт общественного здоровья",
+    "name_en": "Fergana Medical Institute of Public Health",
+    "alpha_two_code": "UZ",
+    "state-province": "Fergana",
+    "domains": ["fjti.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://namdu.uz/"],
+    "name_uz": "Namangan davlat universiteti",
+    "name_ru": "Наманганский государственный университет",
+    "name_en": "Namangan State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Namangan",
+    "domains": ["namdu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://nammti.uz/"],
+    "name_uz": "Namangan muhandislik-qurilish instituti",
+    "name_ru": "Наманганский инженерно-строительный институт",
+    "name_en": "Namangan Engineering-Construction Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Namangan",
+    "domains": ["nammti.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://urdu.uz/"],
+    "name_uz": "Urganch davlat universiteti",
+    "name_ru": "Ургенчский государственный университет",
+    "name_en": "Urgench State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Khorezm",
+    "domains": ["urdu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://ubtuit.uz/"],
+    "name_uz": "Muhammad al-Xorazmiy nomidagi TATU Urganch filiali",
+    "name_ru": "Ургенчский филиал ТУИТ имени Мухаммада аль-Хорезми",
+    "name_en": "Urgench Branch of TUIT named after Muhammad al-Khwarizmi",
+    "alpha_two_code": "UZ",
+    "state-province": "Khorezm",
+    "domains": ["ubtuit.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://karsu.uz/"],
+    "name_uz": "Qoraqalpoq davlat universiteti",
+    "name_ru": "Каракалпакский государственный университет",
+    "name_en": "Karakalpak State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Karakalpakstan",
+    "domains": ["karsu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://ndpi.uz/"],
+    "name_uz": "Nukus davlat pedagogika instituti",
+    "name_ru": "Нукусский государственный педагогический институт",
+    "name_en": "Nukus State Pedagogical Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Karakalpakstan",
+    "domains": ["ndpi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://kmi.uz/"],
+    "name_uz": "Qoraqalpog‘iston tibbiyot instituti",
+    "name_ru": "Медицинский институт Каракалпакстана",
+    "name_en": "Medical Institute of Karakalpakstan",
+    "alpha_two_code": "UZ",
+    "state-province": "Karakalpakstan",
+    "domains": ["kmi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://qarshidu.uz/"],
+    "name_uz": "Qarshi davlat universiteti",
+    "name_ru": "Каршинский государственный университет",
+    "name_en": "Karshi State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Kashkadarya",
+    "domains": ["qarshidu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://qmii.uz/"],
+    "name_uz": "Qarshi muhandislik-iqtisodiyot instituti",
+    "name_ru": "Каршинский инженерно-экономический институт",
+    "name_en": "Karshi Engineering-Economics Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Kashkadarya",
+    "domains": ["qmii.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tersu.uz/"],
+    "name_uz": "Termiz davlat universiteti",
+    "name_ru": "Термезский государственный университет",
+    "name_en": "Termez State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Surkhandarya",
+    "domains": ["tersu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://terapi.uz/"],
+    "name_uz": "Termiz muhandislik-texnologiya instituti",
+    "name_ru": "Термезский инженерно-технологический институт",
+    "name_en": "Termez Institute of Engineering and Technology",
+    "alpha_two_code": "UZ",
+    "state-province": "Surkhandarya",
+    "domains": ["terapi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://guldu.uz/"],
+    "name_uz": "Guliston davlat universiteti",
+    "name_ru": "Гулистанский государственный университет",
+    "name_en": "Gulistan State University",
+    "alpha_two_code": "UZ",
+    "state-province": "Syrdarya",
+    "domains": ["guldu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://nspi.uz/"],
+    "name_uz": "Navoiy davlat pedagogika instituti",
+    "name_ru": "Навоийский государственный педагогический институт",
+    "name_en": "Navoi State Pedagogical Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Navoi",
+    "domains": ["nspi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://nmt.uz/"],
+    "name_uz": "Navoiy davlat konchilik va texnologiyalar universiteti",
+    "name_ru": "Навоийский государственный горно-технологический университет",
+    "name_en": "Navoi State University of Mining and Technologies",
+    "alpha_two_code": "UZ",
+    "state-province": "Navoi",
+    "domains": ["nmt.uz", "ndki.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://jspi.uz/"],
+    "name_uz": "Jizzax davlat pedagogika universiteti",
+    "name_ru": "Джизакский государственный педагогический университет",
+    "name_en": "Jizzakh State Pedagogical University",
+    "alpha_two_code": "UZ",
+    "state-province": "Jizzakh",
+    "domains": ["jspi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://jizpi.uz/"],
+    "name_uz": "Jizzax politexnika instituti",
+    "name_ru": "Джизакский политехнический институт",
+    "name_en": "Jizzakh Polytechnic Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Jizzakh",
+    "domains": ["jizpi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://qdpi.uz/"],
+    "name_uz": "Qo‘qon davlat pedagogika instituti",
+    "name_ru": "Кокандский государственный педагогический институт",
+    "name_en": "Kokand State Pedagogical Institute",
+    "alpha_two_code": "UZ",
+    "state-province": "Fergana",
+    "domains": ["qdpi.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://kokanduni.uz/"],
+    "name_uz": "Qo‘qon universiteti",
+    "name_ru": "Университет Коканд",
+    "name_en": "Kokand University",
+    "alpha_two_code": "UZ",
+    "state-province": "Fergana",
+    "domains": ["kokanduni.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tmii.uz/"],
+    "name_uz": "Toshkent menejment va iqtisodiyot instituti",
+    "name_ru": "Ташкентский институт менеджмента и экономики",
+    "name_en": "Tashkent Institute of Management and Economics",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tmii.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://emu.uz/"],
+    "name_uz": "EMU universiteti",
+    "name_ru": "Университет EMU",
+    "name_en": "EMU University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["emu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://cambridge.uz/"],
+    "name_uz": "Kembrij xalqaro universiteti",
+    "name_ru": "Международный университет Кембридж",
+    "name_en": "Cambridge International University",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["cambridge.uz", "ciu.uz"],
+    "country": "Uzbekistan"
+  },
+  {
+    "web_pages": ["https://tmc.uz/"],
+    "name_uz": "TMC instituti",
+    "name_ru": "Институт TMC",
+    "name_en": "TMC Institute in Tashkent",
+    "alpha_two_code": "UZ",
+    "state-province": "Tashkent",
+    "domains": ["tmc.uz"],
+    "country": "Uzbekistan"
+  }
+]

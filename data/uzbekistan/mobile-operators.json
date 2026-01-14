@@ -1,0 +1,79 @@
+[
+  {
+    "id": "beeline",
+    "name": "Beeline Uzbekistan",
+    "company": "Unitel LLC",
+    "prefixes": ["90", "91"],
+    "website": "https://beeline.uz",
+    "ussd_balance": "*102#",
+    "support_phone": "0611",
+    "color": "#ffcc00",
+    "type": "GSM"
+  },
+  {
+    "id": "ucell",
+    "name": "Ucell",
+    "company": "Coscom LLC",
+    "prefixes": ["93", "94", "50"],
+    "website": "https://ucell.uz",
+    "ussd_balance": "*100#",
+    "support_phone": "8123",
+    "color": "#652d87",
+    "type": "GSM"
+  },
+  {
+    "id": "mobiuz",
+    "name": "Mobiuz",
+    "company": "Universal Mobile Systems LLC",
+    "prefixes": ["97", "88"],
+    "website": "https://mobi.uz",
+    "ussd_balance": "*100#",
+    "support_phone": "0890",
+    "color": "#e31e24",
+    "type": "GSM"
+  },
+  {
+    "id": "uztelecom",
+    "name": "Uztelecom (Uzmobile)",
+    "company": "Uzbektelecom JSC",
+    "prefixes": ["99", "95", "77"],
+    "website": "https://uztelecom.uz",
+    "ussd_balance": "*100#",
+    "support_phone": "1099",
+    "color": "#0064a6",
+    "type": "GSM"
+  },
+  {
+    "id": "humans",
+    "name": "Humans",
+    "company": "Humans LLC",
+    "prefixes": ["33"],
+    "website": "https://humans.uz",
+    "ussd_balance": "*111#",
+    "support_phone": "1234",
+    "color": "#ffb900",
+    "type": "MVNO"
+  },
+  {
+    "id": "oq",
+    "name": "OQ",
+    "company": "Unitel LLC (Digital Brand)",
+    "prefixes": ["20"],
+    "website": "https://oq.uz",
+    "ussd_balance": null,
+    "support_phone": "Chat-only",
+    "color": "#000000",
+    "type": "Digital"
+  },
+  {
+    "id": "perfectum",
+    "name": "Perfectum",
+    "company": "Rubicon Wireless Communication",
+    "prefixes": ["98"],
+    "website": "https://perfectum.uz",
+    "ussd_balance": "*100#",
+    "support_phone": "0777",
+    "color": "#f58220",
+    "type": "CDMA/5G"
+  }
+]

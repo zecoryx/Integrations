@@ -1,0 +1,299 @@
+[
+  {
+    "id": "nbu",
+    "name": "O‘zbekiston Milliy Banki",
+    "short_name": "Milliy Bank (NBU)",
+    "website": "https://nbu.uz",
+    "support_phone": "1344",
+    "color": "#183259",
+    "type": "Davlat"
+  },
+  {
+    "id": "sqb",
+    "name": "O‘zsanoatqurilishbank",
+    "short_name": "SQB",
+    "website": "https://sqb.uz",
+    "support_phone": "1180",
+    "color": "#006d5b",
+    "type": "Davlat"
+  },
+  {
+    "id": "xalq_banki",
+    "name": "Xalq Banki",
+    "short_name": "Xalq Banki",
+    "website": "https://xb.uz",
+    "support_phone": "1106",
+    "color": "#28a745",
+    "type": "Davlat"
+  },
+  {
+    "id": "agrobank",
+    "name": "Agrobank",
+    "short_name": "Agrobank",
+    "website": "https://agrobank.uz",
+    "support_phone": "1216",
+    "color": "#005833",
+    "type": "Davlat"
+  },
+  {
+    "id": "asaka",
+    "name": "Asakabank",
+    "short_name": "Asakabank",
+    "website": "https://asakabank.uz",
+    "support_phone": "1152",
+    "color": "#005eb8",
+    "type": "Davlat"
+  },
+  {
+    "id": "ipoteka",
+    "name": "Ipoteka Bank (OTP Group)",
+    "short_name": "Ipoteka Bank",
+    "website": "https://ipotekabank.uz",
+    "support_phone": "1233",
+    "color": "#008d36",
+    "type": "Xususiy (Chet el)"
+  },
+  {
+    "id": "brb",
+    "name": "Biznesni Rivojlantirish Banki (sobiq QQB)",
+    "short_name": "BRB",
+    "website": "https://brb.uz",
+    "support_phone": "1254",
+    "color": "#0f4c81",
+    "type": "Davlat"
+  },
+  {
+    "id": "aloqa",
+    "name": "Aloqabank",
+    "short_name": "Aloqabank",
+    "website": "https://aloqabank.uz",
+    "support_phone": "1170",
+    "color": "#e31e24",
+    "type": "Davlat"
+  },
+  {
+    "id": "mkb",
+    "name": "Mikrokreditbank",
+    "short_name": "MKBank",
+    "website": "https://mkb.uz",
+    "support_phone": "1285",
+    "color": "#f58220",
+    "type": "Davlat"
+  },
+  {
+    "id": "turon",
+    "name": "Turonbank",
+    "short_name": "Turonbank",
+    "website": "https://turonbank.uz",
+    "support_phone": "1220",
+    "color": "#0056b3",
+    "type": "Davlat"
+  },
+  {
+    "id": "kapital",
+    "name": "Kapitalbank",
+    "short_name": "Kapitalbank",
+    "website": "https://kapitalbank.uz",
+    "support_phone": "1340",
+    "color": "#1d2c5b",
+    "type": "Xususiy"
+  },
+  {
+    "id": "hamkor",
+    "name": "Hamkorbank",
+    "short_name": "Hamkorbank",
+    "website": "https://hamkorbank.uz",
+    "support_phone": "1256",
+    "color": "#ffc107",
+    "type": "Xususiy (Chet el)"
+  },
+  {
+    "id": "ipak_yoli",
+    "name": "Ipak Yo‘li Banki",
+    "short_name": "Ipak Yo‘li",
+    "website": "https://ipakyulibank.uz",
+    "support_phone": "1296",
+    "color": "#007a33",
+    "type": "Xususiy"
+  },
+  {
+    "id": "ofb",
+    "name": "Orient Finans Bank",
+    "short_name": "OFB",
+    "website": "https://ofb.uz",
+    "support_phone": "1370",
+    "color": "#b8860b",
+    "type": "Xususiy"
+  },
+  {
+    "id": "infin",
+    "name": "Invest Finance Bank",
+    "short_name": "InfinBank",
+    "website": "https://infinbank.com",
+    "support_phone": "1214",
+    "color": "#ee3124",
+    "type": "Xususiy"
+  },
+  {
+    "id": "tbc",
+    "name": "TBC Bank Uzbekistan",
+    "short_name": "TBC Bank",
+    "website": "https://tbcbank.uz",
+    "support_phone": "1150",
+    "color": "#00a3e0",
+    "type": "Raqamli (Chet el)"
+  },
+  {
+    "id": "anor",
+    "name": "Anorbank",
+    "short_name": "Anorbank",
+    "website": "https://anorbank.uz",
+    "support_phone": "1290",
+    "color": "#b71c1c",
+    "type": "Raqamli"
+  },
+  {
+    "id": "uzum",
+    "name": "Uzum Bank",
+    "short_name": "Uzum Bank",
+    "website": "https://uzum.com/bank",
+    "support_phone": "1353",
+    "color": "#7000ff",
+    "type": "Raqamli"
+  },
+  {
+    "id": "octo",
+    "name": "Octobank (sobiq Ravnaq)",
+    "short_name": "Octobank",
+    "website": "https://octo.uz",
+    "support_phone": "1252",
+    "color": "#000000",
+    "type": "Xususiy"
+  },
+  {
+    "id": "davr",
+    "name": "Davr Bank",
+    "short_name": "Davr Bank",
+    "website": "https://davrbank.uz",
+    "support_phone": "1284",
+    "color": "#c0392b",
+    "type": "Xususiy"
+  },
+  {
+    "id": "trast",
+    "name": "Trastbank",
+    "short_name": "Trastbank",
+    "website": "https://trastbank.uz",
+    "support_phone": "1287",
+    "color": "#2980b9",
+    "type": "Xususiy"
+  },
+  {
+    "id": "aab",
+    "name": "Asia Alliance Bank",
+    "short_name": "Alliance Bank",
+    "website": "https://aab.uz",
+    "support_phone": "71 231 60 00",
+    "color": "#8e44ad",
+    "type": "Xususiy"
+  },
+  {
+    "id": "universal",
+    "name": "Universalbank",
+    "short_name": "Universalbank",
+    "website": "https://universalbank.uz",
+    "support_phone": "71 200 11 10",
+    "color": "#27ae60",
+    "type": "Xususiy"
+  },
+  {
+    "id": "ziraat",
+    "name": "Ziraat Bank Uzbekistan",
+    "short_name": "Ziraat Bank",
+    "website": "https://ziraatbank.uz",
+    "support_phone": "1293",
+    "color": "#d60019",
+    "type": "Chet el (Turkiya)"
+  },
+  {
+    "id": "kdb",
+    "name": "KDB Bank Uzbekistan",
+    "short_name": "KDB",
+    "website": "https://kdb.uz",
+    "support_phone": "78 140 56 60",
+    "color": "#003366",
+    "type": "Chet el (Koreya)"
+  },
+  {
+    "id": "poytaxt",
+    "name": "Poytaxt Bank",
+    "short_name": "Poytaxt Bank",
+    "website": "https://poytaxtbank.uz",
+    "support_phone": "71 214 20 00",
+    "color": "#e67e22",
+    "type": "Davlat (Hokimiyat)"
+  },
+  {
+    "id": "madad",
+    "name": "Madad Invest Bank",
+    "short_name": "Madad Invest",
+    "website": "https://madadinvestbank.uz",
+    "support_phone": "73 244 00 00",
+    "color": "#16a085",
+    "type": "Xususiy"
+  },
+  {
+    "id": "garant",
+    "name": "Garant Bank (sobiq Savdogar)",
+    "short_name": "Garant Bank",
+    "website": "https://garantbank.uz",
+    "support_phone": "1326",
+    "color": "#1abc9c",
+    "type": "Xususiy"
+  },
+  {
+    "id": "saderat",
+    "name": "Bank Saderat Tashkent",
+    "short_name": "Saderat",
+    "website": "https://saderatbank.uz",
+    "support_phone": "78 140 44 40",
+    "color": "#2c3e50",
+    "type": "Chet el (Eron)"
+  },
+  {
+    "id": "apex",
+    "name": "Apex Bank",
+    "short_name": "Apex Bank",
+    "website": "https://apexbank.uz",
+    "support_phone": "55 503 20 20",
+    "color": "#000000",
+    "type": "Raqamli/Xususiy"
+  },
+  {
+    "id": "smart",
+    "name": "Smart Bank",
+    "short_name": "Smart Bank",
+    "website": "https://smartbank.uz",
+    "support_phone": "71 203 88 88",
+    "color": "#3498db",
+    "type": "Raqamli"
+  },
+  {
+    "id": "hayot",
+    "name": "Hayot Bank",
+    "short_name": "Hayot Bank",
+    "website": "https://hayotbank.uz",
+    "support_phone": "1320",
+    "color": "#8b4513",
+    "type": "Raqamli/Xususiy"
+  },
+  {
+    "id": "yangibank",
+    "name": "Yangibank",
+    "short_name": "Yangibank",
+    "website": "https://yangibank.uz",
+    "support_phone": "90 900 00 00",
+    "color": "#ff6600",
+    "type": "Raqamli/Xususiy"
+  }
+]
