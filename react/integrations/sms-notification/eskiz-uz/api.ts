@@ -1,1 +1,0 @@
-// Eskiz token olish va SMS yuborish logikasi.

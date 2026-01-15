@@ -1,1 +1,0 @@
-// Sana formatlash.

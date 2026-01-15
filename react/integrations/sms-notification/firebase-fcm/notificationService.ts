@@ -1,1 +1,0 @@
-// Token olish va xabarni qabul qilish.

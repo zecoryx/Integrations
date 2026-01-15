@@ -1,1 +1,0 @@
-// Email yuborish funksiyasi.
