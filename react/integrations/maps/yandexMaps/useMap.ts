@@ -33,7 +33,7 @@ export const useMap = (
 
     if (!window.ymaps) {
       const script = document.createElement("script");
-      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${env.REACT_APP_YANDEX_MAPS_API_KEY}&lang=en_US`;
+      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${env.YANDEX_MAPS_API_KEY}&lang=en_US`;
       script.type = "text/javascript";
       script.onload = () => window.ymaps.ready(initMap);
       document.body.appendChild(script);
