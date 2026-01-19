@@ -1,1 +1,19 @@
-// Request/Response tiplari.
+// This file contains the type definitions for the ChatGPT integration.
+
+// Represents the role of a message in a chat conversation.
+// - `user`: A message from the user.
+// - `assistant`: A message from the ChatGPT assistant.
+// - `system`: A message that sets the context for the conversation.
+export type ChatRole = "user" | "assistant" | "system";
+
+// Represents a single message in a chat conversation.
+export interface ChatMessage {
+  // A unique identifier for the message.
+  id: string;
+
+  // The role of the message sender.
+  role: ChatRole;
+
+  // The content of the message.
+  content: string;
+}

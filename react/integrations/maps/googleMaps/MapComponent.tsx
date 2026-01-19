@@ -1,36 +1,26 @@
-// @ts-nocheck
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from "react";
+import { useMap } from "./useMap";
+import { Coordinates } from "./types";
 
 interface MapProps {
-    center: { lat: number; lng: number };
-    zoom?: number;
+  center: Coordinates;
+  zoom?: number;
 }
 
-export const GoogleMapComponent: React.FC<MapProps> = ({ center, zoom = 12 }) => {
-    const mapRef = useRef<HTMLDivElement>(null);
-    const API_KEY = 'SIZNING_GOOGLE_MAPS_KEY';
+// A component that renders a Google Map.
+// @param center The initial center of the map.
+// @param zoom The initial zoom level of the map.
+export const GoogleMapComponent: React.FC<MapProps> = ({
+  center,
+  zoom = 12,
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  useMap(mapRef, center, zoom);
 
-    useEffect(() => {
-        // Scriptni tekshiramiz
-        if (!window.google) {
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}`;
-            script.async = true;
-            script.onload = initMap;
-            document.body.appendChild(script);
-        } else {
-            initMap();
-        }
-
-        function initMap() {
-            if (mapRef.current) {
-                new window.google.maps.Map(mapRef.current, {
-                    center,
-                    zoom,
-                });
-            }
-        }
-    }, [center, zoom]);
-
-    return <div ref={mapRef} style={{ width: '100%', height: '400px', borderRadius: '10px' }} />;
+  return (
+    <div
+      ref={mapRef}
+      style={{ width: "100%", height: "400px", borderRadius: "10px" }}
+    />
+  );
 };

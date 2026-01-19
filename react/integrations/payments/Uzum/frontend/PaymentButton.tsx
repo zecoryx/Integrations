@@ -1,52 +1,38 @@
 // @ts-nocheck
-// This component renders a button to initiate a payment with Uzum.
-// It would typically get the payment details (like transaction ID and amount)
-// and then redirect the user to the Uzum payment page.
+import React from "react";
+import { env } from "../../../../core/env";
 
-import React from 'react';
-
-// In a real app, this function might fetch a pre-signed URL from your backend
-// instead of generating it on the client to keep secrets safe.
-// import { generateUzumPaymentUrl } from './api';
-
-interface UzumPaymentButtonProps {
-  serviceId: number;
-  transactionId: string;
-  amountInTiyn: number;
+interface Props {
+  amount: number;
+  orderId: string;
+  children: React.ReactNode;
 }
 
-const UzumPaymentButton: React.FC<UzumPaymentButtonProps> = ({
-  serviceId,
-  transactionId,
-  amountInTiyn,
-}) => {
-  const handlePayment = () => {
-    // In a real application, you should get this URL from your backend
-    // to avoid exposing secrets on the client side.
-    const paymentUrl = `/api/payments/uzum/pay?serviceId=${serviceId}&transId=${transactionId}&amount=${amountInTiyn}`;
-    
-    // For demonstration, let's assume a simple redirect:
-    console.log(`Redirecting to Uzum payment page for transaction ${transactionId}`);
-    // window.location.href = paymentUrl;
-    alert(`Would redirect to: ${paymentUrl}`);
+// A button component that initiates the Uzum payment process.
+// When clicked, it redirects the user to the Uzum payment URL.
+//
+// @param amount The amount to be paid.
+// @param orderId The unique identifier for the order.
+// @param children The content of the button.
+const PaymentButton: React.FC<Props> = ({ amount, orderId, children }) => {
+  const handleClick = () => {
+    // Uzum payment requires amount in cents.
+    const amountInCents = amount * 100;
+
+    const params = new URLSearchParams({
+      client_id: env.UZUM_CLIENT_ID,
+      amount: amountInCents.toString(),
+      transaction_id: orderId, // Uzum uses transaction_id for order reference
+      return_url: env.UZUM_RETURN_URL,
+    });
+
+    // In a real application, you would likely make a backend call to create a payment
+    // and receive a checkout URL, rather than constructing it directly on the frontend.
+    // For demonstration purposes, this directly constructs a redirect URL if Uzum supports it.
+    window.location.href = `${env.UZUM_API_URL}/checkout?${params.toString()}`;
   };
 
-  return (
-    <button
-      onClick={handlePayment}
-      style={{
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        backgroundColor: '#7000FF', // Uzum brand color
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-      }}
-    >
-      Pay with Uzum
-    </button>
-  );
+  return <button onClick={handleClick}>{children}</button>;
 };
 
-export default UzumPaymentButton;
+export default PaymentButton;

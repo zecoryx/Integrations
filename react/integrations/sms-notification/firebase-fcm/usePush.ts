@@ -1,56 +1,46 @@
-// @ts-nocheck
-import { useState, useEffect } from 'react';
-// import { getMessaging, getToken, onMessage } from "firebase/messaging";
-// import { initializeApp } from "firebase/app";
+import { useState, useEffect } from "react";
+import { getFirebaseToken } from "./firebase-messaging-sw"; // Import the token retrieval function
 
-// Config
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  // ... boshqa configlar
-};
+// A custom hook for managing client-side Firebase Cloud Messaging (FCM) push notifications.
+// It handles requesting notification permissions and retrieving the FCM device token.
 
-export const usePushNotification = () => {
+// @returns An object containing the FCM token, loading state, error, and a function to request notification permission.
+export const usePush = () => {
   const [fcmToken, setFcmToken] = useState<string | null>(null);
-  const [notification, setNotification] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [permissionGranted, setPermissionGranted] = useState(false);
 
-  // 1. Ruxsat so'rash va Token olish
-  const requestPermission = async () => {
+  // Function to request notification permission and get the FCM token
+  const requestNotificationPermission = async () => {
+    setIsLoading(true);
+    setError(null);
     try {
+      // Request permission from the user
       const permission = await Notification.requestPermission();
-      
-      if (permission === 'granted') {
-        // Firebase ishga tushirish (Mock kod)
-        // const app = initializeApp(firebaseConfig);
-        // const messaging = getMessaging(app);
-        
-        // Token olish
-        // const token = await getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" });
-        
-        const mockToken = "fcm_token_sample_123456"; // Test uchun
-        console.log("FCM Token:", mockToken);
-        setFcmToken(mockToken);
-        
-        // Tokenni Backendga yuborib saqlash kerak!
-        // await api.post('/users/save-token', { token: mockToken });
-        
-        return mockToken;
+      if (permission === "granted") {
+        setPermissionGranted(true);
+        const token = await getFirebaseToken();
+        setFcmToken(token);
       } else {
-        alert("Bildirishnomaga ruxsat berilmadi 🔕");
+        setError(new Error("Notification permission denied."));
+        setPermissionGranted(false);
       }
-    } catch (error) {
-      console.error("Push Error:", error);
+    } catch (err) {
+      console.error("Error requesting notification permission:", err);
+      setError(err as Error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // 2. Foreground (Sayt ochiq turganda) xabarni ushlash
   useEffect(() => {
-    // const messaging = getMessaging();
-    // onMessage(messaging, (payload) => {
-    //   console.log("Xabar keldi:", payload);
-    //   setNotification(payload.notification);
-    //   alert(payload.notification?.title + "\n" + payload.notification?.body);
-    // });
+    // Check initial permission status
+    if ("Notification" in window && Notification.permission === "granted") {
+      setPermissionGranted(true);
+      requestNotificationPermission(); // Try to get token if permission already granted
+    }
   }, []);
 
-  return { requestPermission, fcmToken, notification };
+  return { fcmToken, isLoading, error, permissionGranted, requestNotificationPermission };
 };

@@ -1,9 +1,14 @@
-// @ts-nocheck
+import { env } from "../../../core/env";
 
-export const loginWithOneID = () => {
-    const CLIENT_ID = 'sizning_client_id';
-    // Backenddagi callback URL
-    const REDIRECT_URI = 'https://sizning-sayt.uz/auth/oneid/callback';
+// Generates the OneID authorization URL.
+// @returns The OneID authorization URL.
+export const getOneIdUrl = (): string => {
+  const params = new URLSearchParams();
+  params.append("client_id", env.ONEID_CLIENT_ID);
+  params.append("redirect_uri", env.ONEID_REDIRECT_URI);
+  params.append("response_type", "code");
+  params.append("scope", "legal");
+  params.append("method", "ID_CARD");
 
-    window.location.href = `https://sso.egov.uz/sso/oauth/Authorization.do?response_type=one_code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=legal`;
+  return `https://sso.egov.uz/sso/oauth/Authorization.do?${params.toString()}`;
 };

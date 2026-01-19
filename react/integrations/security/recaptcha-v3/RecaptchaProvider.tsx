@@ -1,40 +1,55 @@
-// @ts-nocheck
-import { useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { env } from "../../..//core/env/index";
 
-const SITE_KEY = 'GOOGLE_SITE_KEY';
+interface RecaptchaContextType {
+  executeRecaptcha: ((action?: string) => Promise<string | null>) | null;
+}
 
+const RecaptchaContext = createContext<RecaptchaContextType>({
+  executeRecaptcha: null,
+});
+
+// Provides the reCAPTCHA context to its children.
+// It loads the Google reCAPTCHA v3 script and makes the executeRecaptcha function available.
+
+// @param children The child components that will have access to the reCAPTCHA context.
+export const RecaptchaProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  return (
+    <GoogleReCaptchaProvider reCaptchaKey={env.RECAPTCHA_SITE_KEY}>
+      <RecaptchaInternalProvider>{children}</RecaptchaInternalProvider>
+    </GoogleReCaptchaProvider>
+  );
+};
+
+const RecaptchaInternalProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (executeRecaptcha) {
+      setIsReady(true);
+    }
+  }, [executeRecaptcha]);
+
+  return (
+    <RecaptchaContext.Provider value={{ executeRecaptcha: isReady ? executeRecaptcha : null }}>
+      {children}
+    </RecaptchaContext.Provider>
+  );
+};
+
+// A hook to access the reCAPTCHA execute function from the context.
+
+// @returns The `executeRecaptcha` function or null if the reCAPTCHA is not ready.
 export const useRecaptcha = () => {
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    // 1. Scriptni yuklash
-    useEffect(() => {
-        if (document.getElementById('recaptcha-script')) {
-            setIsLoaded(true);
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`;
-        script.id = 'recaptcha-script';
-        script.async = true;
-        script.onload = () => setIsLoaded(true);
-        document.body.appendChild(script);
-    }, []);
-
-    // 2. Token olish (Tugma bosilganda ishlatasiz)
-    const getRecaptchaToken = useCallback(async (action: string = 'submit') => {
-        if (!isLoaded || !window.grecaptcha) {
-            console.warn('⚠️ Recaptcha hali yuklanmadi');
-            return null;
-        }
-
-        return new Promise<string>((resolve) => {
-            window.grecaptcha.ready(() => {
-                window.grecaptcha.execute(SITE_KEY, { action })
-                    .then((token: string) => resolve(token));
-            });
-        });
-    }, [isLoaded]);
-
-    return { getRecaptchaToken, isLoaded };
+  const context = useContext(RecaptchaContext);
+  if (context === undefined) {
+    throw new Error("useRecaptcha must be used within a RecaptchaProvider");
+  }
+  return context;
 };

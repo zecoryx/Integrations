@@ -1,33 +1,35 @@
-// @ts-nocheck
-import { useState } from 'react';
-import api from '../../../../core/axios'; // O'zingizning axios instanceingiz
+import { useState } from "react";
+import { emailApi } from "./api";
 
-interface EmailRequest {
-    to: string;
-    subject: string;
-    body: string; // HTML yoki oddiy matn
+interface SendEmailPayload {
+  to: string;
+  subject: string;
+  html: string;
 }
 
+// A custom hook for sending emails via the backend email service.
+
+// @returns An object containing the loading state, error, and a function to send an email.
 export const useEmail = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-    const sendEmail = async (data: EmailRequest) => {
-        setLoading(true);
-        setError(null);
-        try {
-            // Backendga so'rov: POST /notifications/email
-            await api.post('/notifications/email', data);
-            alert("📧 Xat yuborildi!");
-            return true;
-        } catch (err) {
-            console.error("Email Error:", err);
-            setError("Xat yuborishda xatolik bo'ldi");
-            return false;
-        } finally {
-            setLoading(false);
-        }
-    };
+  // Sends an email using the email API client.
 
-    return { sendEmail, loading, error };
+  // @param payload The email data, including recipient, subject, and HTML content.
+  const sendEmail = async (payload: SendEmailPayload) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      await emailApi.sendEmail(payload);
+      alert("Email sent successfully!"); // Placeholder for success notification
+    } catch (err) {
+      setError(err as Error);
+      alert("Failed to send email."); // Placeholder for error notification
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { isLoading, error, sendEmail };
 };

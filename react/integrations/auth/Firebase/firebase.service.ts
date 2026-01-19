@@ -1,43 +1,65 @@
 // @ts-nocheck
-// import { initializeApp } from "firebase/app";
-// import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 
+import { initializeApp, FirebaseApp } from "firebase/app";
+import {
+    getAuth,
+    signInWithPopup,
+    GoogleAuthProvider,
+    signOut,
+    Auth,
+    User,
+} from "firebase/auth";
+import { env } from "../../../core/env";
+
+// Firebase configuration object.
+// The values are read from the environment variables.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  // ... boshqa configlar
+    apiKey: env.FIREBASE_API_KEY,
+    authDomain: env.FIREBASE_AUTH_DOMAIN,
+    projectId: env.FIREBASE_PROJECT_ID,
+    storageBucket: env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: env.FIREBASE_APP_ID,
 };
 
-// const app = initializeApp(firebaseConfig);
-// const auth = getAuth(app);
-// const googleProvider = new GoogleAuthProvider();
+// The Firebase app instance.
+const app: FirebaseApp = initializeApp(firebaseConfig);
 
+// The Firebase auth instance.
+const auth: Auth = getAuth(app);
+
+// The Google auth provider instance.
+const googleProvider: GoogleAuthProvider = new GoogleAuthProvider();
+
+// This service provides methods for interacting with the Firebase Authentication API.
 export const AuthService = {
-  /**
-   * Google orqali kirish (Popup oynasida)
-   */
-  loginWithGoogle: async () => {
-    try {
-      // const result = await signInWithPopup(auth, googleProvider);
-      // return result.user;
-      console.log("Google Login Mock");
-      return { displayName: "Lazizbek", email: "test@gmail.com" };
-    } catch (error) {
-      console.error("Firebase Error:", error);
-      throw error;
-    }
-  },
+    // Logs in the user with Google using a popup window.
+    // @returns A promise that resolves with the user object.
+    loginWithGoogle: async (): Promise<User> => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            return result.user;
+        } catch (error) {
+            console.error("Firebase login error:", error);
+            throw error;
+        }
+    },
 
-  /**
-   * Tizimdan chiqish
-   */
-  logout: async () => {
-    try {
-      // await signOut(auth);
-      console.log("Logged out");
-    } catch (error) {
-      console.error("Logout Error:", error);
-    }
-  }
+    // Logs out the current user.
+    // @returns A promise that resolves when the user is logged out.
+    logout: async (): Promise<void> => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Firebase logout error:", error);
+            throw error;
+        }
+    },
+
+    // Subscribes to the authentication state changes.
+    // @param callback
+    // @returns
+    onAuthStateChanged: (callback: (user: User | null) => void) => {
+        return auth.onAuthStateChanged(callback);
+    },
 };

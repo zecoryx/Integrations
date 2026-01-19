@@ -1,48 +1,32 @@
 // @ts-nocheck
-// This component renders a button to start a payment with Payme.
-// It uses the `generatePaymePaymentUrl` function to create the checkout link
-// and redirects the user to it.
+import React from "react";
+import { env } from "../../../../core/env";
 
-import React from 'react';
-import { generatePaymePaymentUrl } from './api';
-
-interface PaymePaymentButtonProps {
-  amountInTiyn: number;
-  planId: string;
-  userId: string;
+interface Props {
+  amount: number;
+  orderId: string;
+  children: React.ReactNode;
 }
 
-const PaymePaymentButton: React.FC<PaymePaymentButtonProps> = ({
-  amountInTiyn,
-  planId,
-  userId,
-}) => {
-  const handlePayment = () => {
-    const paymentUrl = generatePaymePaymentUrl({
-      amount: amountInTiyn,
-      planId,
-      userId,
-    });
-    // Redirect the user to the Payme checkout page
-    window.location.href = paymentUrl;
+// A button component that initiates the Payme payment process.
+// When clicked, it redirects the user to the Payme payment URL.
+//
+// @param amount The amount to be paid (in tiyins, e.g., 100000 for 1000.00 UZS).
+// @param orderId The unique identifier for the order.
+// @param children The content of the button.
+const PaymentButton: React.FC<Props> = ({ amount, orderId, children }) => {
+  const handleClick = () => {
+    // Payme requires amount in tiyins (cents), so multiply by 100
+    const amountInTiyins = amount * 100;
+
+    const encodedOrderId = btoa(orderId); // Base64 encode order ID
+
+    const paymeUrl = `https://checkout.paycom.uz/?merchant=${env.PAYME_MERCHANT_ID};amount=${amountInTiyins};account.order_id=${encodedOrderId};callback=${env.PAYME_CALLBACK_URL}`;
+
+    window.location.href = paymeUrl;
   };
 
-  return (
-    <button
-      onClick={handlePayment}
-      style={{
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        backgroundColor: '#33CCCC', // Payme brand color
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-      }}
-    >
-      Pay with Payme
-    </button>
-  );
+  return <button onClick={handleClick}>{children}</button>;
 };
 
-export default PaymePaymentButton;
+export default PaymentButton;

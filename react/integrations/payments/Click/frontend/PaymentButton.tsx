@@ -1,54 +1,41 @@
 // @ts-nocheck
-// This component should render a button that initiates the Click payment process.
-// It would typically involve calling a function (like generateClickPaymentUrl from api.ts)
-// to get the payment URL and then redirecting the user to it.
+import React from "react";
+import { env } from "../../../../core/env";
 
-import React from 'react';
-
-// Example props interface
-interface ClickPaymentButtonProps {
-  serviceId: number;
-  transactionId: string;
+interface Props {
   amount: number;
-  userId: string;
+  orderId: string;
+  returnUrl: string;
+  children: React.ReactNode;
 }
 
-const ClickPaymentButton: React.FC<ClickPaymentButtonProps> = ({
-  serviceId,
-  transactionId,
+// A button component that initiates the Click payment process.
+// When clicked, it redirects the user to the Click payment URL.
+//
+// @param amount The amount to be paid.
+// @param orderId The unique identifier for the order.
+// @param returnUrl The URL to redirect to after the payment is completed.
+// @param children The content of the button.
+const PaymentButton: React.FC<Props> = ({
   amount,
-  userId,
+  orderId,
+  returnUrl,
+  children,
 }) => {
   const handleClick = () => {
-    // 1. Construct the payment URL
     const params = new URLSearchParams({
-      service_id: String(serviceId),
-      merchant_trans_id: transactionId,
-      amount: String(amount),
-      param2: userId, // Pass user id
+      service_id: env.CLICK_MERCHANT_ID,
+      merchant_id: env.CLICK_MERCHANT_ID, // Assuming merchant_id is the same as service_id for simplicity
+      amount: amount.toString(),
+      transaction_param: orderId,
+      return_url: returnUrl,
     });
-    const paymentUrl = `https://my.click.uz/services/pay?${params.toString()}`;
 
-    // 2. Redirect the user to the Click payment page
-    window.location.href = paymentUrl;
+    // Redirect to Click payment gateway
+    window.location.href = `${env.CLICK_API_URL}?${params.toString()}`;
   };
 
-  return (
-    <button
-      onClick={handleClick}
-      style={{
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        backgroundColor: '#00A65A',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-      }}
-    >
-      Pay with Click
-    </button>
-  );
+  return <button onClick={handleClick}>{children}</button>;
 };
 
-export default ClickPaymentButton;
+export default PaymentButton;
