@@ -2,7 +2,39 @@
 
 import { useState, useEffect, useRef } from "react";
 
-// A custom hook for speech recognition using the Web Speech API.
+// TypeScript type definitions for Web Speech API
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: SpeechRecognitionErrorEvent) => void;
+  onend: () => void;
+  start: () => void;
+  stop: () => void;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  transcript: string;
+  0: string;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+
+// A custom hook for speech recognition using the modern Web Speech API.
 //
 // @returns An object containing the transcript, listening state, error, and functions to start and stop listening.
 export const useSpeechRecognition = () => {
@@ -13,21 +45,24 @@ export const useSpeechRecognition = () => {
   const recognition = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
-    if (!("webkitSpeechRecognition" in window)) {
+    // Check for browser support using the standard API
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
       setError("Web Speech API is not supported by this browser.");
       return;
     }
 
-    const SpeechRecognition =
-      window.webkitSpeechRecognition || window.SpeechRecognition;
-    recognition.current = new SpeechRecognition();
-    const recognitionInstance = recognition.current;
+    const recognitionInstance = new SpeechRecognition();
+    recognition.current = recognitionInstance;
 
+    // Configure recognition settings
     recognitionInstance.continuous = true;
     recognitionInstance.interimResults = true;
     recognitionInstance.lang = "en-US";
 
-    recognitionInstance.onresult = (event) => {
+    // Handle recognition results
+    recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
       let finalTranscript = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
@@ -37,16 +72,21 @@ export const useSpeechRecognition = () => {
       setTranscript(finalTranscript);
     };
 
-    recognitionInstance.onerror = (event) => {
+    // Handle recognition errors
+    recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
       setError(event.error);
     };
 
+    // Handle recognition end
     recognitionInstance.onend = () => {
       setIsListening(false);
     };
 
+    // Cleanup function
     return () => {
-      recognitionInstance.stop();
+      if (recognitionInstance) {
+        recognitionInstance.stop();
+      }
     };
   }, []);
 

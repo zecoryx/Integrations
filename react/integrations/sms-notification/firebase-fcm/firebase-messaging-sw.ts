@@ -2,6 +2,16 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { env } from "../../../core/env/index";
 
+// Extend Window interface for service worker
+declare global {
+  interface ServiceWorkerGlobalScope {
+    registration: ServiceWorkerRegistration | null;
+    showNotification: (title: string, options: NotificationOptions) => void;
+  }
+}
+
+const _self = self as unknown as ServiceWorkerGlobalScope;
+
 // Firebase configuration for the client-side app.
 // These values are read from environment variables to keep them secure and configurable.
 const firebaseConfig = {
@@ -27,8 +37,7 @@ const messaging = getMessaging(app);
 export const getFirebaseToken = async () => {
   try {
     const currentToken = await getToken(messaging, {
-      vapidKey:
-        "YOUR_VAPID_KEY", // Replace with your actual VAPID key from Firebase console
+      vapidKey: env.FIREBASE_CLIENT_VAPID_KEY, // Use VAPID key from environment variables
     });
 
     if (currentToken) {
@@ -55,8 +64,8 @@ onMessage(messaging, (payload) => {
     body: payload.notification?.body || "",
     icon: "/firebase-logo.png", // Replace with your app icon
   };
-  if (self.registration && payload.notification) {
-    self.registration.showNotification(notificationTitle, notificationOptions);
+  if (_self.registration && payload.notification) {
+    _self.registration.showNotification(notificationTitle, notificationOptions);
   }
 });
 

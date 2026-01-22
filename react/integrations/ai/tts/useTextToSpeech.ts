@@ -1,9 +1,7 @@
-// @ts-nocheck
-
 import { useState, useEffect } from "react";
 
 // A custom hook for text-to-speech functionality using the Web Speech API.
-
+//
 // @returns An object containing the speaking state, error, and a function to speak the given text.
 export const useTextToSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);

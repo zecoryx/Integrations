@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { serverEnv } from './env';
 import clickRoutes from '../react/integrations/payments/Click/backend/click.routes';
 import uzumRoutes from '../react/integrations/payments/Uzum/backend/uzum.routes';
@@ -7,6 +8,12 @@ import paymeRoutes from '../react/integrations/payments/Payme/backend/payme.rout
 
 const app = express();
 const PORT = serverEnv.PORT;
+
+// Enable CORS for all routes
+app.use(cors({
+  origin: '*', // Allow all origins (configure appropriately for production)
+  credentials: true, // Allow cookies and authorization headers
+}));
 
 // Middleware to parse JSON request bodies
 app.use(bodyParser.json());

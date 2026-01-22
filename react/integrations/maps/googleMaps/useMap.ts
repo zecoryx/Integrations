@@ -1,8 +1,13 @@
-// @ts-nocheck
-
 import React, { useEffect } from "react";
 import { env } from "../../../core/env";
 import { Coordinates } from "./types";
+
+// Extend Window interface for Google Maps
+declare global {
+  interface Window {
+    google: any;
+  }
+}
 
 /**
  * A custom hook for initializing a Google Map.

@@ -1,7 +1,7 @@
 // This file is the single source of truth for all environment variables used in the application.
-// It reads the environment variables from the `process.env` object and exports them as a frozen object.
+// It reads environment variables from `process.env` object and exports them as a frozen object.
 // This approach provides a clear and centralized way to manage environment variables,
-// and it also helps to prevent accidental modifications to the environment variables at runtime.
+// and it also helps to prevent accidental modifications to environment variables at runtime.
 
 // Define the shape of the environment variables object.
 interface Env {
@@ -51,12 +51,13 @@ interface Env {
   FIREBASE_CLIENT_MESSAGING_SENDER_ID: string;
   FIREBASE_CLIENT_APP_ID: string;
   FIREBASE_CLIENT_MEASUREMENT_ID: string; // Commonly included
+  FIREBASE_CLIENT_VAPID_KEY: string; // VAPID key for FCM web push
 }
 
-// Create a new object with the environment variables.
+// Create a new object with environment variables.
 const env: Env = {
   API_URL: process.env.API_URL || "http://localhost:3000",
-  NODE_ENV: process.env.NODE_ENV || "development",
+  NODE_ENV: (process.env.NODE_ENV as "development" | "production" | "test") || "development",
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
   CLAUDE_API_KEY: process.env.CLAUDE_API_KEY || "",
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || "",
@@ -94,20 +95,22 @@ const env: Env = {
   EMAIL_SERVICE_API_URL: process.env.EMAIL_SERVICE_API_URL || "",
   ESKIZ_SMS_API_URL: process.env.ESKIZ_SMS_API_URL || "",
   PUSH_NOTIFICATION_API_URL: process.env.PUSH_NOTIFICATION_API_URL || "",
-  FIREBASE_CLIENT_API_KEY: process.env.FIREBASE_CLIENT_API_KEY || process.env.FIREBASE_API_KEY, // Use existing if not set
-  FIREBASE_CLIENT_AUTH_DOMAIN: process.env.FIREBASE_CLIENT_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN, // Use existing if not set
-  FIREBASE_CLIENT_PROJECT_ID: process.env.FIREBASE_CLIENT_PROJECT_ID || process.env.FIREBASE_PROJECT_ID, // Use existing if not set
-  FIREBASE_CLIENT_STORAGE_BUCKET: process.env.FIREBASE_CLIENT_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET, // Use existing if not set
-  FIREBASE_CLIENT_MESSAGING_SENDER_ID: process.env.FIREBASE_CLIENT_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID, // Use existing if not set
-  FIREBASE_CLIENT_APP_ID: process.env.FIREBASE_CLIENT_APP_ID || process.env.FIREBASE_APP_ID, // Use existing if not set
+  FIREBASE_CLIENT_API_KEY: process.env.FIREBASE_CLIENT_API_KEY || process.env.FIREBASE_API_KEY || "", // Use existing if not set
+  FIREBASE_CLIENT_AUTH_DOMAIN: process.env.FIREBASE_CLIENT_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || "", // Use existing if not set
+  FIREBASE_CLIENT_PROJECT_ID: process.env.FIREBASE_CLIENT_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || "", // Use existing if not set
+  FIREBASE_CLIENT_STORAGE_BUCKET: process.env.FIREBASE_CLIENT_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || "", // Use existing if not set
+  FIREBASE_CLIENT_MESSAGING_SENDER_ID: process.env.FIREBASE_CLIENT_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID || "", // Use existing if not set
+  FIREBASE_CLIENT_APP_ID: process.env.FIREBASE_CLIENT_APP_ID || process.env.FIREBASE_APP_ID || "", // Use existing if not set
   FIREBASE_CLIENT_MEASUREMENT_ID: process.env.FIREBASE_CLIENT_MEASUREMENT_ID || "",
+  FIREBASE_CLIENT_VAPID_KEY: process.env.FIREBASE_CLIENT_VAPID_KEY || "", // VAPID key for FCM
 };
 
-// Validate the environment variables.
-// If a required environment variable is not set, an error will be thrown.
+// Validate environment variables.
+// If a required environment variable is not set or is empty, an error will be thrown.
 for (const key in env) {
-  if (env[key as keyof Env] === undefined) {
-    throw new Error(`Missing environment variable: ${key}`);
+  const value = env[key as keyof Env];
+  if (value === undefined || value === '') {
+    throw new Error(`Missing or empty environment variable: ${key}`);
   }
 }
 

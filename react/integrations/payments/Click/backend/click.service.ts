@@ -1,9 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { ObjectId } from 'mongodb';
-import { generateMD5 } from '../../../utils/hashing';
-import { ClickError } from './backend/constants/status-codes'; // Assuming this path is correct now
-import { TransactionActions } from './backend/constants/transaction-actions';
-import { ClickRequestDto } from './backend/dto/click-request.dto';
+import { generateMD5 } from '../../../../utils/hashing';
+import { ClickError } from './constants/status-codes';
+import { TransactionActions } from './constants/transaction-actions';
+import { ClickRequestDto } from './dto/click-request.dto';
 import { GenerateMd5HashParams } from './interfaces/generate-prepare-hash.interface';
 
 const prisma = new PrismaClient();
@@ -12,7 +11,7 @@ export class ClickService {
   private readonly secretKey: string;
 
   constructor() {
-    this.secretKey = process.env.CLICK_SECRET;
+    this.secretKey = process.env.CLICK_SECRET || '';
     if (!this.secretKey) {
       throw new Error('CLICK_SECRET is not configured in environment variables.');
     }
@@ -61,7 +60,7 @@ export class ClickService {
       return signatureError;
     }
 
-    const { user, plan, error } = await this._validateTransaction(userId, planId);
+    const { user, plan, error } = await this._validateTransaction(userId || '', planId || '');
     if (error) {
       return error;
     }
@@ -142,8 +141,8 @@ export class ClickService {
     }
 
     const { user, plan, error: validationError } = await this._validateTransaction(
-      userId,
-      planId,
+      userId || '',
+      planId || '',
     );
     if (validationError) {
       return validationError;
@@ -212,7 +211,9 @@ export class ClickService {
   }
 
   private async _validateTransaction(userId: string, planId: string) {
-    if (!ObjectId.isValid(userId) || !ObjectId.isValid(planId)) {
+    // Validate that userId and planId are non-empty strings
+    // Note: Prisma uses string IDs, not MongoDB ObjectId
+    if (!userId || !planId || userId.trim() === '' || planId.trim() === '') {
       return {
         error: {
           error: ClickError.UserNotFound,
