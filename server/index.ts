@@ -2,9 +2,9 @@ import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { serverEnv } from './env';
-import clickRoutes from '../react/integrations/payments/Click/backend/click.routes';
-import uzumRoutes from '../react/integrations/payments/Uzum/backend/uzum.routes';
-import paymeRoutes from '../react/integrations/payments/Payme/backend/payme.routes';
+import clickRoutes from '../integrations/payments/Click/backend/click.routes';
+import uzumRoutes from '../integrations/payments/Uzum/backend/uzum.routes';
+import paymeRoutes from '../integrations/payments/Payme/backend/payme.routes';
 
 const app = express();
 const PORT = serverEnv.PORT;
