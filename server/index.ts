@@ -2,9 +2,14 @@ import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { serverEnv } from './env';
-import clickRoutes from '../integrations/payments/Click/backend/click.routes';
-import uzumRoutes from '../integrations/payments/Uzum/backend/uzum.routes';
-import paymeRoutes from '../integrations/payments/Payme/backend/payme.routes';
+import clickRoutes from './integrations/payments/click/click.routes';
+import uzumRoutes from './integrations/payments/uzum/uzum.routes';
+import paymeRoutes from './integrations/payments/payme/payme.routes';
+import paynetRoutes from './integrations/payments/paynet/paynet.routes';
+import aiRoutes from './integrations/ai/ai.routes';
+import authRoutes from './integrations/auth/auth.routes';
+import smsRoutes from './integrations/sms/sms.routes';
+import securityRoutes from './integrations/security/security.routes';
 
 const app = express();
 const PORT = serverEnv.PORT;
@@ -30,13 +35,14 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Payment Integration Routes
-// ARCHITECTURAL CONCERN: These routes are imported from the 'react' directory.
-// Ideally, backend routes should be defined independently in the 'server' directory
-// to maintain a clear separation of concerns between frontend and backend.
-// For this audit, the existing file structure is maintained as per instructions.
 app.use('/click', clickRoutes);
 app.use('/uzum', uzumRoutes);
 app.use('/payme', paymeRoutes);
+app.use('/paynet', paynetRoutes);
+app.use('/ai', aiRoutes);
+app.use('/auth', authRoutes);
+app.use('/sms', smsRoutes);
+app.use('/security', securityRoutes);
 
 // Centralized Error Handling Middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

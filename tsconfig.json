@@ -26,8 +26,8 @@
     "integrations/**/*.ts",
     "integrations/**/*.tsx",
     "core/**/*.ts",
-    "utilities/**/*.ts",
-    "utilities/**/*.tsx"
+    "utils/**/*.ts",
+    "utils/**/*.tsx"
   ],
   "exclude": ["node_modules", "dist"]
 }

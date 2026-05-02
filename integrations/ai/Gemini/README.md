@@ -57,3 +57,5 @@ export default ChatComponent;
     ```
     GEMINI_API_KEY=your-api-key
     ```
+
+3. Foydalanilgan model: **`gemini-2.0-flash`** (Google Gemini 2.0 Flash).

@@ -1,29 +1,23 @@
-// @ts-nocheck
 import React from "react";
-import { env } from "../../../../core/env";
+import { generatePaymePaymentUrl } from "../backend/api";
 
 interface Props {
-  amount: number;
-  orderId: string;
+  amount: number;   // So'mda (masalan, 50000 = 50,000 so'm)
+  planId: string;   // Tarif/plan ID
+  userId: string;   // Foydalanuvchi ID
   children: React.ReactNode;
 }
 
-// A button component that initiates the Payme payment process.
-// When clicked, it redirects the user to the Payme payment URL.
-//
-// @param amount The amount to be paid (in tiyins, e.g., 100000 for 1000.00 UZS).
-// @param orderId The unique identifier for the order.
-// @param children The content of the button.
-const PaymentButton: React.FC<Props> = ({ amount, orderId, children }) => {
+// Payme to'lov sahifasiga yo'naltiruvchi tugma.
+// amount so'mda beriladi — funksiya ichida tiyinga o'tkaziladi (* 100).
+const PaymentButton: React.FC<Props> = ({ amount, planId, userId, children }) => {
   const handleClick = () => {
-    // Payme requires amount in tiyins (cents), so multiply by 100
-    const amountInTiyins = amount * 100;
-
-    const encodedOrderId = btoa(orderId); // Base64 encode order ID
-
-    const paymeUrl = `https://checkout.paycom.uz/?merchant=${env.PAYME_MERCHANT_ID};amount=${amountInTiyins};account.order_id=${encodedOrderId};callback=${env.PAYME_CALLBACK_URL}`;
-
-    window.location.href = paymeUrl;
+    const url = generatePaymePaymentUrl({
+      amount: amount * 100, // Tiyinga o'tkazish (Payme talab qiladi)
+      planId,
+      userId,
+    });
+    window.location.href = url;
   };
 
   return <button onClick={handleClick}>{children}</button>;

@@ -57,3 +57,5 @@ export default ChatComponent;
     ```
     OPENAI_API_KEY=your-api-key
     ```
+
+3. Foydalanilgan model: **`gpt-4o-mini`** (OpenAI GPT-4o mini).

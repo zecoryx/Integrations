@@ -14,8 +14,22 @@ interface ServerEnv {
   UZUM_CLIENT_SECRET: string;
   ESKIZ_SMS_CLIENT_EMAIL: string;
   ESKIZ_SMS_CLIENT_PASSWORD: string;
-  // Add other server-side environment variables as needed
-  // PUSH_NOTIFICATION_SERVER_KEY: string;
+  OPENAI_API_KEY: string;
+  CLAUDE_API_KEY: string;
+  GEMINI_API_KEY: string;
+  ONEID_CLIENT_SECRET: string;
+  PAYNET_USERNAME: string;
+  PAYNET_PASSWORD: string;
+  RECAPTCHA_SECRET_KEY: string;
+  TELEGRAM_BOT_TOKEN: string;
+  STRIPE_SECRET_KEY: string;
+  PAYNET_API_URL: string;
+  PAYNET_MERCHANT_ID: string;
+  PAYME_LOGIN: string;
+  PAYME_MERCHANT_KEY: string;
+  UZUM_LOGIN: string;
+  UZUM_PASSWORD: string;
+  UZUM_SERVICE_ID: number;
 }
 
 // Create a new object with the server environment variables.
@@ -26,7 +40,22 @@ const serverEnv: ServerEnv = {
   UZUM_CLIENT_SECRET: process.env.UZUM_CLIENT_SECRET || '',
   ESKIZ_SMS_CLIENT_EMAIL: process.env.ESKIZ_SMS_CLIENT_EMAIL || '',
   ESKIZ_SMS_CLIENT_PASSWORD: process.env.ESKIZ_SMS_CLIENT_PASSWORD || '',
-  // PUSH_NOTIFICATION_SERVER_KEY: process.env.PUSH_NOTIFICATION_SERVER_KEY || '',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+  CLAUDE_API_KEY: process.env.CLAUDE_API_KEY || '',
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+  ONEID_CLIENT_SECRET: process.env.ONEID_CLIENT_SECRET || '',
+  PAYNET_USERNAME: process.env.PAYNET_USERNAME || '',
+  PAYNET_PASSWORD: process.env.PAYNET_PASSWORD || '',
+  RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY || '',
+  TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || '',
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
+  PAYNET_API_URL: process.env.PAYNET_API_URL || 'https://api.paynet.uz',
+  PAYNET_MERCHANT_ID: process.env.PAYNET_MERCHANT_ID || '',
+  PAYME_LOGIN: process.env.PAYME_LOGIN || 'Paycom',
+  PAYME_MERCHANT_KEY: process.env.PAYME_MERCHANT_KEY || '',
+  UZUM_LOGIN: process.env.UZUM_LOGIN || '',
+  UZUM_PASSWORD: process.env.UZUM_PASSWORD || '',
+  UZUM_SERVICE_ID: parseInt(process.env.UZUM_SERVICE_ID || '0', 10),
 };
 
 // Validate the environment variables.

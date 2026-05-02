@@ -30,9 +30,13 @@ export const useChat = () => {
       const response = await geminiApi.sendMessage(newMessages);
 
       // Add the assistant's response to the chat history.
+      const responseText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!responseText) {
+        throw new Error("Gemini returned an empty response.");
+      }
       const assistantMessage: ChatMessage = {
         role: "model",
-        parts: [{ text: response.candidates[0].content.parts[0].text }],
+        parts: [{ text: responseText }],
       };
       setMessages((prevMessages) => [...prevMessages, assistantMessage]);
     } catch (error) {

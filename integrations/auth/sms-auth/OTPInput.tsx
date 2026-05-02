@@ -1,4 +1,4 @@
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, { useState, useRef, useEffect, ChangeEvent } from "react";
 
 interface Props {
   length: number;
@@ -11,8 +11,18 @@ interface Props {
 // @param value The current value of the OTP.
 // @param onChange A function to call when the OTP value changes.
 const OTPInput: React.FC<Props> = ({ length, value, onChange }) => {
-  const [otp, setOtp] = useState(new Array(length).fill(""));
+  const [otp, setOtp] = useState<string[]>(() =>
+    value ? value.slice(0, length).split("").concat(new Array(Math.max(0, length - value.length)).fill("")) : new Array(length).fill("")
+  );
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Sync internal state when parent resets value (e.g. after form submit)
+  useEffect(() => {
+    const newOtp = value
+      ? value.slice(0, length).split("").concat(new Array(Math.max(0, length - value.length)).fill(""))
+      : new Array(length).fill("");
+    setOtp(newOtp);
+  }, [value, length]);
 
   const handleChange = (element: HTMLInputElement, index: number) => {
     if (isNaN(Number(element.value))) return;

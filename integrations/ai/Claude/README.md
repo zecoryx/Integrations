@@ -57,3 +57,5 @@ export default ChatComponent;
     ```
     CLAUDE_API_KEY=your-api-key
     ```
+
+3. Foydalanilgan model: **`claude-sonnet-4-6`** (Anthropic sonnet-4-6).

@@ -1,0 +1,30 @@
+{
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "error": "Xato yuz berdi",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "back": "Orqaga",
+    "next": "Keyingisi",
+    "submit": "Yuborish",
+    "search": "Qidirish",
+    "close": "Yopish"
+  },
+  "auth": {
+    "login": "Kirish",
+    "logout": "Chiqish",
+    "register": "Ro'yxatdan o'tish",
+    "email": "Email",
+    "password": "Parol",
+    "forgotPassword": "Parolni unutdingizmi?"
+  },
+  "payment": {
+    "pay": "To'lash",
+    "amount": "Summa",
+    "success": "To'lov muvaffaqiyatli amalga oshirildi",
+    "failed": "To'lov amalga oshmadi",
+    "cancelled": "To'lov bekor qilindi"
+  }
+}

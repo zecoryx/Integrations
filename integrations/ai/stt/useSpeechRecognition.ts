@@ -1,9 +1,7 @@
-// @ts-nocheck
-
 import { useState, useEffect, useRef } from "react";
 
 // TypeScript type definitions for Web Speech API
-interface SpeechRecognition extends EventTarget {
+interface SpeechRecognitionInstance extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
@@ -21,80 +19,77 @@ interface SpeechRecognitionEvent extends Event {
 
 interface SpeechRecognitionResultList {
   length: number;
-  [index: number]: SpeechRecognitionResult;
-}
-
-interface SpeechRecognitionResult {
-  isFinal: boolean;
-  transcript: string;
-  0: string;
+  [index: number]: { isFinal: boolean; 0: { transcript: string } };
 }
 
 interface SpeechRecognitionErrorEvent extends Event {
   error: string;
 }
 
-// A custom hook for speech recognition using the modern Web Speech API.
-//
-// @returns An object containing the transcript, listening state, error, and functions to start and stop listening.
-export const useSpeechRecognition = () => {
+interface UseSpeechRecognitionOptions {
+  lang?: string; // e.g. "uz-UZ", "ru-RU", "en-US"
+}
+
+// A custom hook for speech recognition using the Web Speech API.
+// @param options.lang  BCP-47 language tag. Defaults to "en-US".
+// @returns isListening, transcript, error, startListening, stopListening
+export const useSpeechRecognition = ({ lang = "en-US" }: UseSpeechRecognitionOptions = {}) => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const recognition = useRef<SpeechRecognition | null>(null);
+  const recognition = useRef<SpeechRecognitionInstance | null>(null);
+  // Accumulates all confirmed (isFinal) speech segments across events
+  const accumulatedTranscript = useRef("");
 
   useEffect(() => {
-    // Check for browser support using the standard API
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
+    const SpeechRecognitionAPI =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognitionAPI) {
       setError("Web Speech API is not supported by this browser.");
       return;
     }
 
-    const recognitionInstance = new SpeechRecognition();
-    recognition.current = recognitionInstance;
+    const instance: SpeechRecognitionInstance = new SpeechRecognitionAPI();
+    recognition.current = instance;
 
-    // Configure recognition settings
-    recognitionInstance.continuous = true;
-    recognitionInstance.interimResults = true;
-    recognitionInstance.lang = "en-US";
+    instance.continuous = true;
+    instance.interimResults = true;
+    instance.lang = lang;
 
-    // Handle recognition results
-    recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
-      let finalTranscript = "";
+    instance.onresult = (event: SpeechRecognitionEvent) => {
+      let newFinal = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
+          newFinal += event.results[i][0].transcript;
         }
       }
-      setTranscript(finalTranscript);
+      if (newFinal) {
+        // Append newly confirmed words to the running total
+        accumulatedTranscript.current += newFinal;
+        setTranscript(accumulatedTranscript.current);
+      }
     };
 
-    // Handle recognition errors
-    recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
+    instance.onerror = (event: SpeechRecognitionErrorEvent) => {
       setError(event.error);
     };
 
-    // Handle recognition end
-    recognitionInstance.onend = () => {
+    instance.onend = () => {
       setIsListening(false);
     };
 
-    // Cleanup function
-    return () => {
-      if (recognitionInstance) {
-        recognitionInstance.stop();
-      }
-    };
-  }, []);
+    return () => instance.stop();
+  }, [lang]);
 
   const startListening = () => {
     if (recognition.current && !isListening) {
+      accumulatedTranscript.current = "";
+      setTranscript("");
+      setError(null);
       recognition.current.start();
       setIsListening(true);
-      setError(null);
     }
   };
 
@@ -105,11 +100,5 @@ export const useSpeechRecognition = () => {
     }
   };
 
-  return {
-    isListening,
-    transcript,
-    error,
-    startListening,
-    stopListening,
-  };
+  return { isListening, transcript, error, startListening, stopListening };
 }

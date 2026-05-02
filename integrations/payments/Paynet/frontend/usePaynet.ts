@@ -1,21 +1,25 @@
 import { useState } from "react";
-import { paynetApi } from "../backend/api";
+import { paynetFrontendApi } from "./api";
+
+interface PaynetStatus {
+  status: string;
+  transactionId?: string;
+  [key: string]: unknown;
+}
 
 // A custom hook for managing Paynet payment interactions.
-//
-// @returns An object containing the payment status, loading state, error, and a function to initiate payment.
+// All requests go through your backend — Paynet credentials never touch the browser.
 export const usePaynet = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<any>(null); // Replace 'any' with actual Paynet status type
+  const [paymentStatus, setPaymentStatus] = useState<PaynetStatus | null>(null);
 
   const initiatePayment = async (transactionId: string, amount: number) => {
     try {
       setIsLoading(true);
       setError(null);
-      const result = await paynetApi.performTransaction(transactionId, amount);
+      const result = await paynetFrontendApi.initiatePayment(transactionId, amount);
       setPaymentStatus(result);
-      // Optionally, you might want to call checkTransaction here or after a delay
     } catch (err) {
       setError(err as Error);
     } finally {
@@ -27,7 +31,7 @@ export const usePaynet = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const result = await paynetApi.checkTransaction(transactionId);
+      const result = await paynetFrontendApi.checkPaymentStatus(transactionId);
       setPaymentStatus(result);
     } catch (err) {
       setError(err as Error);

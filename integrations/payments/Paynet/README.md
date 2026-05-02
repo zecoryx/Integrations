@@ -1,50 +1,98 @@
 # Paynet Integration
 
-This directory contains the integration with the Paynet payment gateway.
+Paynet to'lov tizimi bilan frontend va backend integratsiyasi.
 
-## Usage
+## Arxitektura
 
-### `usePaynet` Hook
-
-The `usePaynet` hook provides functions to initiate and check the status of Paynet transactions.
-
-```typescript
-import { usePaynet } from "./frontend/usePaynet";
-
-// In your component:
-const { isLoading, error, paymentStatus, initiatePayment, checkPaymentStatus } = usePaynet();
-
-// To initiate a payment:
-initiatePayment("your-transaction-id", 15000); // amount in UZS
-
-// To check a payment status:
-checkPaymentStatus("your-transaction-id");
+```
+Frontend (usePaynet, PaymentButton)
+    ↓
+Sizning backendingiz (/api/payment/paynet/*)
+    ↓
+Paynet API (credentials faqat backendda)
 ```
 
-### `PaymentButton` Component
+> **Muhim:** Paynet username va password faqat backendda saqlanadi. Frontend sizning backendingizga oddiy so'rov yuboradi.
 
-The `PaymentButton` component provides a convenient way to trigger Paynet payments.
+## Setup
+
+1. Paynet merchant kabinetidan `Merchant ID`, `Username`, `Password`, va `API URL` oling.
+2. `.env` fayliga qo'shing:
+
+```env
+PAYNET_MERCHANT_ID=your_merchant_id
+PAYNET_USERNAME=your_username
+PAYNET_PASSWORD=your_password
+PAYNET_API_URL=https://api.paynet.uz  # Paynet API URL
+```
+
+## Fayllar
+
+### Frontend
+| Fayl | Maqsad |
+|------|--------|
+| `frontend/api.ts` | Backendga so'rov yuboruvchi API client |
+| `frontend/usePaynet.ts` | To'lov hook'i |
+| `frontend/PaymentButton.tsx` | Tayyor tugma komponenti |
+
+### Backend
+| Fayl | Maqsad |
+|------|--------|
+| `backend/api.ts` | Paynet API bilan bevosita bog'lanish (faqat backend da ishlatiladi) |
+
+## Frontend — ishlatish
+
+### `usePaynet` hook
+
+```tsx
+import { usePaynet } from "./frontend/usePaynet";
+
+const MyComponent = () => {
+  const { isLoading, error, paymentStatus, initiatePayment, checkPaymentStatus } = usePaynet();
+
+  // To'lovni boshlash:
+  await initiatePayment("order-123", 50000); // amount so'mda
+
+  // Holat tekshirish:
+  await checkPaymentStatus("order-123");
+};
+```
+
+### `PaymentButton` komponenti
 
 ```tsx
 import PaymentButton from "./frontend/PaymentButton";
 
-const MyPaymentPage = () => {
+const CheckoutPage = () => {
   return (
-    <PaymentButton transactionId="order123" amount={25000}>
-      Pay with Paynet
+    <PaymentButton transactionId="order-123" amount={50000}>
+      Paynet orqali to'lash
     </PaymentButton>
   );
 };
 ```
 
-### Setup
+## Backend — Paynet proxy route qo'shish
 
-1.  Make sure you have your Paynet Merchant ID, Username, Password, and API URL.
-2.  Add the following environment variables to your `.env` file:
+Frontend `/api/payment/paynet/perform` va `/api/payment/paynet/check` endpointlarini kutadi. Backendda bu routelarni yarating:
 
-    ```
-    PAYNET_MERCHANT_ID=your_merchant_id
-    PAYNET_USERNAME=your_username
-    PAYNET_PASSWORD=your_password
-    PAYNET_API_URL=your_api_url
-    ```
+```ts
+import { paynetApi } from "./backend/api";
+import { Router } from "express";
+
+const router = Router();
+
+router.post("/perform", async (req, res) => {
+  const { transactionId, amount } = req.body;
+  const result = await paynetApi.performTransaction(transactionId, amount);
+  res.json(result);
+});
+
+router.post("/check", async (req, res) => {
+  const { transactionId } = req.body;
+  const result = await paynetApi.checkTransaction(transactionId);
+  res.json(result);
+});
+
+export default router; // app.use("/api/payment/paynet", router)
+```

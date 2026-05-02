@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { initializeApp, FirebaseApp } from "firebase/app";
 import {
     getAuth,

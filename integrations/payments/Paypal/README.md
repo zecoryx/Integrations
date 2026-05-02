@@ -45,8 +45,13 @@ export default MyPaymentPage;
 
 ### Setup
 
-1.  Make sure you have your PayPal Client ID.
-2.  Add the following environment variables to your `.env` file:
+1.  Kutubxonani o'rnating:
+    ```bash
+    npm install @paypal/react-paypal-js
+    ```
+
+2.  [PayPal Developer](https://developer.paypal.com) da ilovangizni yarating va Client ID oling.
+3.  Add the following environment variables to your `.env` file:
 
     ```
     PAYPAL_CLIENT_ID=your_paypal_client_id

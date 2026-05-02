@@ -16,7 +16,7 @@ export const eskizSmsApi = {
   // @returns A promise that resolves if the SMS was successfully sent.
   sendSms: async (payload: SendSmsPayload) => {
     try {
-      await api.post(`${env.ESKIZ_SMS_API_URL}/send`, payload);
+      await api.post("/sms/eskiz/send", payload);
     } catch (error) {
       // Error handling is centralized in the axios interceptor.
       throw error;
@@ -24,17 +24,10 @@ export const eskizSmsApi = {
   },
 
   // Retrieves an access token from the Eskiz.uz API via the backend.
-  // In a real application, this would ideally be handled completely on the backend
-  // to avoid exposing credentials. This frontend call is a simplification.
+  // This is now handled automatically by the backend proxy for simplicity.
   //
-  // @returns A promise that resolves with the access token.
+  // @returns A promise that resolves with a dummy token or success message.
   getAccessToken: async (): Promise<{ token: string }> => {
-    try {
-      const response = await api.post(`${env.ESKIZ_SMS_API_URL}/token`);
-      return response.data;
-    } catch (error) {
-      // Error handling is centralized in the axios interceptor.
-      throw error;
-    }
+    return { token: "handled_by_backend" };
   },
 };

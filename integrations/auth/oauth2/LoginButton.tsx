@@ -14,7 +14,11 @@ interface Props {
 // @param children The content of the button.
 const LoginButton: React.FC<Props> = ({ provider, children }) => {
   const handleClick = () => {
-    window.location.href = getOAuth2Url(provider);
+    try {
+      window.location.href = getOAuth2Url(provider);
+    } catch (error) {
+      console.error("OAuth2 URL generation failed:", error);
+    }
   };
 
   return <button onClick={handleClick}>{children}</button>;

@@ -35,10 +35,15 @@ export const usePush = () => {
   };
 
   useEffect(() => {
-    // Check initial permission status
+    // If permission was already granted before (e.g. returning user), get the token directly
+    // without calling requestNotificationPermission() to avoid triggering a re-request dialog.
     if ("Notification" in window && Notification.permission === "granted") {
       setPermissionGranted(true);
-      requestNotificationPermission(); // Try to get token if permission already granted
+      setIsLoading(true);
+      getFirebaseToken()
+        .then((token) => setFcmToken(token))
+        .catch((err) => setError(err as Error))
+        .finally(() => setIsLoading(false));
     }
   }, []);
 
