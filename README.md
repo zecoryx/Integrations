@@ -1,204 +1,60 @@
-# Frontend Integrations
+# Frontend & Backend Integrations Ecosystem - Production-Grade Architecture
 
-Tayyor integratsiyalar to'plami — React + TypeScript + Node.js/Express loyihalari uchun.
+## Project Essence
+This project is a high-performance, secure ecosystem designed to unify disparate third-party integrations (Payments, AI, Authentication, SMS, etc.) into a single, cohesive interface. It solves the problem of "integration sprawl" by providing a standardized, layered architecture that handles the complexity of external APIs while ensuring data integrity, security, and extreme scalability.
 
-Har bir integratsiya mustaqil papkada joylashgan va o'z `README.md` si bor. Faqat kerakli integratsiyani olib ishlatish mumkin.
+## Architecture Deep Dive
+The system follows a strict **Layered + Repository Pattern** to separate concerns and ensure maintainability.
 
-## Tezkor boshlash
+### 1. Controllers (Route Layer)
+Controllers are the entry points. They are strictly responsible for:
+- Parsing incoming HTTP requests.
+- Validating request schemas via DTOs and `class-validator`.
+- Calling the appropriate Service method.
+- Returning standardized HTTP responses.
+- No business logic or database queries reside here.
 
-```bash
-npm install
-```
+### 2. Services (Business Logic Layer)
+Services are the "brains" of the application. They:
+- Orchestrate business workflows (e.g., verifying a user before creating a payment).
+- Communicate with external third-party APIs (OpenAI, Click, Payme, etc.).
+- Perform fine-grained validation and enforce business rules.
+- Utilize Repositories for all data persistence needs.
+- Use `Promise.all()` to parallelize independent I/O operations.
 
-`.env` faylini yarating va faqat ishlatmoqchi bo'lgan integratsiyalar uchun kalitlarni to'ldiring.
+### 3. Repositories (Data Access Layer)
+Repositories provide a clean API for the database (Prisma ORM). This layer:
+- Abstracts all Prisma queries.
+- Ensures consistent data retrieval patterns.
+- Allows the business logic to remain agnostic of the underlying database implementation.
+- Implements "Sparse Fieldsets" to minimize payload size by selecting only necessary columns.
 
-```bash
-npm start   # Development
-npm run build  # Production build
-```
+## Tech Stack & Rationale
+- **Node.js & Express:** Chosen for their non-blocking I/O model and massive ecosystem, perfect for handling high-frequency integration proxies.
+- **TypeScript:** Provides structural type safety, reducing runtime errors and improving developer productivity in a complex integration environment.
+- **Prisma ORM:** Offers an intuitive, type-safe API for database interactions, with built-in support for transactions and complex relations.
+- **Axios:** A robust HTTP client used for all third-party API communications, featuring centralized interceptors for security and logging.
+- **Class-Validator & Class-Transformer:** Ensure that all incoming data strictly adheres to defined DTOs before reaching the business logic.
 
-## Loyiha tuzilishi
+## Core Logic Flow
+1. **Request Ingress:** A request hits an Express route (Controller).
+2. **Pre-Validation:** Middleware validates the auth header and the request body against a DTO.
+3. **Service Orchestration:** The controller passes the validated DTO to a Service method.
+4. **Data Retrieval:** The service calls one or more Repositories (often in parallel) to fetch necessary records (User, Plan, Transaction).
+5. **External Interaction:** If needed, the service makes an authorized call to an external API (e.g., a payment gateway or AI model).
+6. **State Persistence:** The service updates the database state via a Repository (often wrapped in a Prisma transaction for atomicity).
+7. **Response Egress:** The service returns a result (or throws a standardized error) back to the controller, which then sends the response to the client.
 
-```
-frontend-integrations/
-├── core/                    # Umumiy yordamchi modullar
-│   ├── axios/               # HTTP client (interceptorlar bilan)
-│   ├── env/                 # Barcha env o'zgaruvchilar (yagona manba)
-│   └── errors/              # Global xato boshqarish
-│
-├── data/                    # Statik ma'lumotlar (API kerak emas)
-│   ├── global/              # Mamlakatlar, valyutalar, tillar, vaqt zonalari
-│   ├── mock/                # Foydalanuvchilar, mahsulotlar, va boshqalar (test uchun)
-│   └── uzbekistan/          # Viloyatlar, tumanlar, banklar, universitetlar
-│
-├── integrations/            # Barcha integratsiyalar
-│   ├── ai/                  # Sun'iy intellekt
-│   ├── analytics/           # Sayt analitikasi
-│   ├── auth/                # Autentifikatsiya
-│   ├── document/            # PDF va hujjatlar
-│   ├── i18n/                # Ko'p tillik qo'llab-quvvatlash
-│   ├── maps/                # Xaritalar
-│   ├── payments/            # To'lov tizimlari
-│   ├── realtime/            # Real-vaqt aloqa
-│   ├── scanner/             # QR va barkod skanerlash
-│   ├── security/            # Xavfsizlik
-│   ├── sms-notification/    # Bildirishnomalar
-│   └── storage/             # Fayl saqlash
-│
-└── utils/                   # Yordamchi funksiyalar (hashing, Excel, va h.k.)
-```
+## Edge Case Handling
+- **Paranoid Error Handling:** Every layer is wrapped in `try-catch` blocks. Detailed errors are logged server-side, while obfuscated, user-friendly messages are returned to the client to prevent information leakage.
+- **Timeout Management:** All external API calls have strict timeouts (e.g., 10-30s) to prevent resource exhaustion and hanging connections.
+- **Null Safety:** Strict checks for `null` or `undefined` records are performed before any operation, with early-return or specialized error responses.
+- **Atomic Transactions:** Payment preparation and completion are wrapped in database transactions to ensure that user balances and transaction statuses remain consistent even in case of a crash.
+- **Timing Attack Protection:** Timing-safe comparisons are used for sensitive credentials (like merchant keys).
 
----
-
-## Integratsiyalar
-
-### AI (Sun'iy intellekt)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **ChatGPT** | OpenAI GPT modellari bilan chat | [→](integrations/ai/Chatgpt/README.md) |
-| **Claude** | Anthropic Claude bilan chat | [→](integrations/ai/Claude/README.md) |
-| **Gemini** | Google Gemini bilan chat | [→](integrations/ai/Gemini/README.md) |
-| **STT** | Ovozni matnga aylantirish (Web Speech API) | [→](integrations/ai/stt/README.md) |
-| **TTS** | Matnni ovozga aylantirish (Web Speech API) | [→](integrations/ai/tts/README.md) |
-
-### Auth (Autentifikatsiya)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **Firebase Auth** | Google akkaunt orqali kirish | [→](integrations/auth/Firebase/README.md) |
-| **OneID** | O'zbekiston egov.uz orqali ID karta bilan kirish | [→](integrations/auth/OneID/README.md) |
-| **OAuth2** | Google va GitHub orqali kirish (Firebase'siz) | [→](integrations/auth/oauth2/README.md) |
-| **SMS Auth** | Telefon raqami + OTP orqali kirish | [→](integrations/auth/sms-auth/README.md) |
-| **Telegram Login** | Telegram akkaunt orqali kirish | [→](integrations/auth/Telegram/README.md) |
-| **E-IMZO** | O'zbekiston elektron imzo bilan kirish | [→](integrations/auth/E-IMZO/README.md) |
-
-### Maps (Xaritalar)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **Google Maps** | Google Maps JavaScript API | [→](integrations/maps/googleMaps/README.md) |
-| **Yandex Maps** | Yandex Maps API | [→](integrations/maps/yandexMaps/README.md) |
-
-### Payments (To'lov tizimlari)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **Click** | O'zbekiston Click to'lov tizimi | [→](integrations/payments/Click/README.md) |
-| **Payme** | O'zbekiston Payme to'lov tizimi | [→](integrations/payments/Payme/README.md) |
-| **Uzum Bank** | O'zbekiston Uzum Bank to'lovi | [→](integrations/payments/Uzum/README.md) |
-| **Paynet** | O'zbekiston Paynet to'lov tizimi | [→](integrations/payments/Paynet/README.md) |
-| **PayPal** | Xalqaro PayPal to'lovi | [→](integrations/payments/Paypal/README.md) |
-| **Stripe** | Xalqaro Stripe karta to'lovi | [→](integrations/payments/Stripe/README.md) |
-| **Crypto** | WalletConnect orqali kripto hamyon | [→](integrations/payments/Crypto/README.md) |
-
-### Analytics (Analitika)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **Google Analytics 4** | Sayt trafigi va eventlarni kuzatish | [→](integrations/analytics/GoogleAnalytics/README.md) |
-| **Yandex Metrika** | Sayt trafigi va maqsadlarni kuzatish | [→](integrations/analytics/YandexMetrika/README.md) |
-
-### Realtime (Real-vaqt)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **Socket.IO** | Real-vaqt chat va xonalar | [→](integrations/realtime/SocketIO/README.md) |
-
-### Scanner (Skanerlash)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **QR Scanner** | Kamera orqali QR kod o'qish | [→](integrations/scanner/QRScanner/README.md) |
-
-### Storage (Fayl saqlash)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **Firebase Storage** | Fayl yuklash va boshqarish | [→](integrations/storage/Firebase/README.md) |
-
-### Document (Hujjatlar)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **PDF Generator** | HTML yoki jadvaldan PDF yaratish | [→](integrations/document/PDF/README.md) |
-
-### i18n (Ko'p tillik)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **i18n** | O'zbek, Rus, Ingliz tillarini qo'llab-quvvatlash | [→](integrations/i18n/README.md) |
-
-### Security (Xavfsizlik)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **reCAPTCHA v3** | Google bot himoyasi | [→](integrations/security/recaptcha-v3/README.md) |
-
-### SMS & Notifications (Bildirishnomalar)
-
-| Integratsiya | Tavsif | README |
-|---|---|---|
-| **Eskiz.uz** | O'zbekiston SMS xizmati | [→](integrations/sms-notification/eskiz-uz/README.md) |
-| **Email** | Backend orqali email yuborish | [→](integrations/sms-notification/email-js/README.md) |
-| **Firebase FCM** | Veb push-bildirishnomalar | [→](integrations/sms-notification/firebase-fcm/README.md) |
-
----
-
-## Core modullar
-
-### `core/env/index.ts`
-
-Barcha environment o'zgaruvchilarning yagona manbasi. Yangi o'zgaruvchi qo'shish uchun:
-1. `Env` interfeysi ga tip qo'shing
-2. `env` ob'ektiga qiymat qo'shing
-3. `.env` fayliga key qo'shing
-
-### `core/axios/`
-
-Barcha HTTP so'rovlar uchun sozlangan Axios instance. Interceptorlar avtomatik xatolarni qayta ishlaydi.
-
-```ts
-import api from "../../../core/axios";
-
-const data = await api.get("/users");
-const result = await api.post("/orders", { amount: 50000 });
-```
-
-### `core/errors/`
-
-`AppError` sinfi va global xato boshqaruvchi.
-
----
-
-## Statik ma'lumotlar (`data/`)
-
-API murojaat qilmasdan ishlatish mumkin bo'lgan JSON ma'lumotlar:
-
-| Fayl | Tarkib |
-|------|--------|
-| `data/global/countries.json` | 250 ta mamlakat |
-| `data/global/currencies.json` | Valyutalar ro'yxati |
-| `data/global/languages.json` | Tillar ro'yxati |
-| `data/global/timezones.json` | Vaqt zonalari |
-| `data/uzbekistan/regions.json` | O'zbekiston viloyatlari |
-| `data/uzbekistan/districts.json` | Tumanlar |
-| `data/uzbekistan/banks.json` | Banklar |
-| `data/uzbekistan/universities.json` | Universitetlar |
-| `data/uzbekistan/mobile-operators.json` | Mobil operatorlar |
-| `data/mock/fake-users.json` | Test foydalanuvchilari |
-| `data/mock/fake-products.json` | Test mahsulotlari |
-
----
-
-## Texnologiyalar
-
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Til:** TypeScript
-- **Database ORM:** Prisma + MongoDB
-- **Asosiy kutubxonalar:** Axios, Firebase, class-validator, Luxon, Socket.IO, jsPDF, html2canvas, jsQR, Stripe
-
-## Litsenziya
-
-ISC
+## Future Scalability
+- **Worker Threads:** Offloading high-CPU tasks (image compression, bulk data processing) to worker threads to keep the main event loop free.
+- **Distributed Caching:** Moving from in-memory to Redis-based caching for horizontal scaling across multiple nodes.
+- **Event-Driven Architecture:** Implementing a message queue (e.g., RabbitMQ or BullMQ) for asynchronous tasks like sending SMS or processing long-running AI generations.
+- **Microservices Ready:** The strict separation of integration folders allows for easy extraction of specific integrations (e.g., "Payment Service") into dedicated microservices as the system grows.
+- **Sparse Fieldsets Expansion:** Further optimizing every repository query to fetch only the absolute minimum required fields for each specific context.

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, ChangeEvent } from "react";
+import React, { useState, useRef, useEffect, ChangeEvent, useCallback } from "react";
 
 interface Props {
   length: number;
@@ -10,7 +10,7 @@ interface Props {
 // @param length The number of digits in the OTP.
 // @param value The current value of the OTP.
 // @param onChange A function to call when the OTP value changes.
-const OTPInput: React.FC<Props> = ({ length, value, onChange }) => {
+const OTPInput: React.FC<Props> = React.memo(({ length, value, onChange }) => {
   const [otp, setOtp] = useState<string[]>(() =>
     value ? value.slice(0, length).split("").concat(new Array(Math.max(0, length - value.length)).fill("")) : new Array(length).fill("")
   );
@@ -24,7 +24,7 @@ const OTPInput: React.FC<Props> = ({ length, value, onChange }) => {
     setOtp(newOtp);
   }, [value, length]);
 
-  const handleChange = (element: HTMLInputElement, index: number) => {
+  const handleChange = useCallback((element: HTMLInputElement, index: number) => {
     if (isNaN(Number(element.value))) return;
 
     const newOtp = [...otp];
@@ -36,9 +36,9 @@ const OTPInput: React.FC<Props> = ({ length, value, onChange }) => {
     if (element.nextSibling && element.value) {
       (element.nextSibling as HTMLInputElement).focus();
     }
-  };
+  }, [otp, onChange]);
 
-  const handleKeyDown = (
+  const handleKeyDown = useCallback((
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number
   ) => {
@@ -51,9 +51,9 @@ const OTPInput: React.FC<Props> = ({ length, value, onChange }) => {
       // Focus previous input on backspace
       (inputRefs.current[index - 1] as HTMLInputElement).focus();
     }
-  };
+  }, [otp]);
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData
       .getData("text/plain")
@@ -67,7 +67,7 @@ const OTPInput: React.FC<Props> = ({ length, value, onChange }) => {
     });
     setOtp(newOtp);
     onChange(newOtp.join(""));
-  };
+  }, [otp, length, onChange]);
 
   return (
     <div>
@@ -99,6 +99,8 @@ const OTPInput: React.FC<Props> = ({ length, value, onChange }) => {
       })}
     </div>
   );
-};
+});
+
+OTPInput.displayName = "OTPInput";
 
 export default OTPInput;

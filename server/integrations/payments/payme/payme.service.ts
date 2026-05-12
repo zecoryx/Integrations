@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { DateTime } from 'luxon';
 import { CancelingReasons } from './constants/canceling-reasons';
 import { ErrorStatusCodes } from './constants/error-status-codes';
@@ -12,13 +12,19 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { GetStatementDto } from './dto/get-statement.dto';
 import { PerformTransactionDto } from './dto/perform-transaction.dto';
 import { RequestBody } from './types/incoming-request-body';
+import { TransactionRepository } from '../../../repositories/transaction.repository';
+import { UserRepository } from '../../../repositories/user.repository';
+import { PlanRepository } from '../../../repositories/plan.repository';
+import { PaymentStatus, PaymentProvider } from '../../../constants/payment.constants';
+import { PrismaClient } from '@prisma/client';
 
-type Transaction = any;
-
-const TRANSACTION_TIMEOUT_MINUTES = 720; // 12 hours
 const prisma = new PrismaClient();
+const TRANSACTION_TIMEOUT_MINUTES = 720;
 
 export class PaymeService {
+  private transactionRepo = new TransactionRepository();
+  private userRepo = new UserRepository();
+  private planRepo = new PlanRepository();
 
   async handleTransactionMethods(reqBody: RequestBody) {
     switch (reqBody.method) {
@@ -41,11 +47,9 @@ export class PaymeService {
 
   async checkPerformTransaction(dto: CheckPerformTransactionDto) {
     const { amount, account } = dto.params;
-    const { user, plan } = await this._findUserAndPlan(account.user_id, account.planId);
+    const { plan } = await this._findUserAndPlan(account.user_id, account.planId);
 
-    // Payme amounts are in tiyns (cents)
     if (plan.price * 100 !== amount) {
-      console.error(`Invalid amount for plan ${plan.id}. Expected ${plan.price * 100}, got ${amount}`);
       return this._createError(PaymeError.InvalidAmount);
     }
 
@@ -53,93 +57,79 @@ export class PaymeService {
   }
 
   async createTransaction(dto: CreateTransactionDto) {
-    return prisma.$transaction(async (prismaTx: Prisma.TransactionClient) => {
+    return prisma.$transaction(async (prismaTx) => {
       const { id: transId, amount, account } = dto.params;
+      const existingTx = await this.transactionRepo.findByTransId(transId, prismaTx);
 
-      const existingTransaction = await prismaTx.transactions.findUnique({ where: { transId } });
-
-      if (existingTransaction) {
-        if (existingTransaction.status !== 'PENDING') {
-          return this._createError(PaymeError.CantDoOperation, transId);
-        }
-        const expiryError = await this._checkAndHandleExpiry(existingTransaction, prismaTx);
-        if (expiryError) {
-          return expiryError;
-        }
-        return {
-          result: {
-            transaction: existingTransaction.id,
-            state: TransactionState.Pending,
-            create_time: new Date(existingTransaction.createdAt).getTime(),
-          },
-        };
+      if (existingTx) {
+        return this._handleExistingTransaction(existingTx, prismaTx);
       }
 
       const { user, plan } = await this._findUserAndPlan(account.user_id, account.planId, prismaTx);
 
       if (plan.price * 100 !== amount) {
-        console.error(`Invalid amount for plan ${plan.id}. Expected ${plan.price * 100}, got ${amount}`);
         return this._createError(PaymeError.InvalidAmount, transId);
       }
 
-      const newTransaction = await prismaTx.transactions.create({
-        data: {
-          transId,
-          user: { connect: { id: user.id } },
-          plan: { connect: { id: plan.id } },
-          provider: 'payme',
-          state: TransactionState.Pending,
-          status: 'PENDING',
-          amount,
-        },
-      });
+      const newTx = await this.transactionRepo.create({
+        transId,
+        user: { connect: { id: user.id } },
+        plan: { connect: { id: plan.id } },
+        provider: PaymentProvider.PAYME,
+        state: TransactionState.Pending,
+        status: PaymentStatus.PENDING,
+        amount,
+      }, prismaTx);
 
       return {
         result: {
-          transaction: newTransaction.id,
+          transaction: newTx.id,
           state: TransactionState.Pending,
-          create_time: new Date(newTransaction.createdAt).getTime(),
+          create_time: new Date(newTx.createdAt).getTime(),
         },
       };
     });
   }
 
+  private async _handleExistingTransaction(tx: any, prismaTx: any) {
+    if (tx.status !== PaymentStatus.PENDING) {
+      return this._createError(PaymeError.CantDoOperation, tx.transId);
+    }
+    const expiryError = await this._checkAndHandleExpiry(tx, prismaTx);
+    if (expiryError) return expiryError;
+
+    return {
+      result: {
+        transaction: tx.id,
+        state: TransactionState.Pending,
+        create_time: new Date(tx.createdAt).getTime(),
+      },
+    };
+  }
+
   async performTransaction(dto: PerformTransactionDto) {
-    return prisma.$transaction(async (prismaTx: Prisma.TransactionClient) => {
+    return prisma.$transaction(async (prismaTx) => {
       const transId = dto.params.id;
-      const transaction = await this._findTransaction(transId, prismaTx);
+      const tx = await this.transactionRepo.findByTransId(transId, prismaTx);
+      if (!tx) return this._createError(PaymeError.TransactionNotFound, transId);
 
-      if (transaction.status !== 'PENDING') {
-        if (transaction.status === 'PAID') {
-          return {
-            result: {
-              state: transaction.state,
-              transaction: transaction.id,
-              perform_time: new Date(transaction.performTime).getTime(),
-            },
-          };
-        }
-        return this._createError(PaymeError.CantDoOperation, transId);
+      if (tx.status !== PaymentStatus.PENDING) {
+        return this._handleAlreadyPerformed(tx);
       }
 
-      const expiryError = await this._checkAndHandleExpiry(transaction, prismaTx);
-      if (expiryError) {
-        return expiryError;
-      }
+      const expiryError = await this._checkAndHandleExpiry(tx, prismaTx);
+      if (expiryError) return expiryError;
 
       const performTime = new Date();
-      const updatedPayment = await prismaTx.transactions.update({
-        where: { id: transaction.id },
-        data: {
-          status: 'PAID',
-          state: TransactionState.Paid,
-          performTime,
-        },
-      });
+      await this.transactionRepo.update(tx.id, {
+        status: PaymentStatus.PAID,
+        state: TransactionState.Paid,
+        performTime,
+      }, prismaTx);
 
       return {
         result: {
-          transaction: updatedPayment.id,
+          transaction: tx.id,
           perform_time: performTime.getTime(),
           state: TransactionState.Paid,
         },
@@ -147,74 +137,83 @@ export class PaymeService {
     });
   }
 
-  async cancelTransaction(dto: CancelTransactionDto) {
-    return prisma.$transaction(async (prismaTx: Prisma.TransactionClient) => {
-      const { id: transId, reason } = dto.params;
-      const transaction = await this._findTransaction(transId, prismaTx);
-
-      let newState: typeof TransactionState[keyof typeof TransactionState];
-      if (transaction.status === 'PENDING') {
-        newState = TransactionState.PendingCanceled;
-      } else if (transaction.status === 'PAID') {
-        newState = TransactionState.PaidCanceled;
-      } else {
-        return {
-          result: {
-            state: transaction.state,
-            transaction: transaction.id,
-            cancel_time: new Date(transaction.cancelTime).getTime(),
-          },
-        };
-      }
-
-      const updatedTransaction = await prismaTx.transactions.update({
-        where: { id: transaction.id },
-        data: {
-          status: 'CANCELED',
-          state: newState,
-          cancelTime: new Date(),
-          reason: reason,
-        },
-      });
-
+  private _handleAlreadyPerformed(tx: any) {
+    if (tx.status === PaymentStatus.PAID) {
       return {
         result: {
-          cancel_time: new Date(updatedTransaction.cancelTime).getTime(),
-          transaction: updatedTransaction.id,
-          state: newState,
+          state: tx.state,
+          transaction: tx.id,
+          perform_time: new Date(tx.performTime).getTime(),
         },
       };
+    }
+    return this._createError(PaymeError.CantDoOperation, tx.transId);
+  }
+
+  async cancelTransaction(dto: CancelTransactionDto) {
+    return prisma.$transaction(async (prismaTx) => {
+      const { id: transId, reason } = dto.params;
+      const tx = await this.transactionRepo.findByTransId(transId, prismaTx);
+      if (!tx) return this._createError(PaymeError.TransactionNotFound, transId);
+
+      let newState: number;
+      if (tx.status === PaymentStatus.PENDING) {
+        newState = TransactionState.PendingCanceled;
+      } else if (tx.status === PaymentStatus.PAID) {
+        newState = TransactionState.PaidCanceled;
+      } else {
+        return this._getCancelResult(tx);
+      }
+
+      const updatedTx = await this.transactionRepo.update(tx.id, {
+        status: PaymentStatus.CANCELED,
+        state: newState,
+        cancelTime: new Date(),
+        reason: reason,
+      }, prismaTx);
+
+      return this._getCancelResult(updatedTx);
     });
   }
 
-  async checkTransaction(dto: CheckTransactionDto) {
-    const transaction = await this._findTransaction(dto.params.id);
+  private _getCancelResult(tx: any) {
     return {
       result: {
-        create_time: new Date(transaction.createdAt).getTime(),
-        perform_time: transaction.performTime ? new Date(transaction.performTime).getTime() : 0,
-        cancel_time: transaction.cancelTime ? new Date(transaction.cancelTime).getTime() : 0,
-        transaction: transaction.id,
-        state: transaction.state,
-        reason: transaction.reason,
+        cancel_time: new Date(tx.cancelTime).getTime(),
+        transaction: tx.id,
+        state: tx.state,
+      },
+    };
+  }
+
+  async checkTransaction(dto: CheckTransactionDto) {
+    const tx = await this.transactionRepo.findByTransId(dto.params.id);
+    if (!tx) return this._createError(PaymeError.TransactionNotFound, dto.params.id);
+
+    return {
+      result: {
+        create_time: new Date(tx.createdAt).getTime(),
+        perform_time: tx.performTime ? new Date(tx.performTime).getTime() : 0,
+        cancel_time: tx.cancelTime ? new Date(tx.cancelTime).getTime() : 0,
+        transaction: tx.id,
+        state: tx.state,
+        reason: tx.reason,
       },
     };
   }
 
   async getStatement(dto: GetStatementDto) {
-    const transactions = await prisma.transactions.findMany({
-      where: {
-        createdAt: {
-          gte: new Date(dto.params.from),
-          lte: new Date(dto.params.to),
-        },
-        provider: 'payme',
+    const transactions = await this.transactionRepo.findMany({
+      createdAt: {
+        gte: new Date(dto.params.from),
+        lte: new Date(dto.params.to),
       },
+      provider: PaymentProvider.PAYME,
     });
 
     return {
       result: {
-        transactions: transactions.map((t: Transaction) => ({
+        transactions: transactions.map((t: any) => ({
           id: t.transId,
           time: new Date(t.createdAt).getTime(),
           amount: t.amount,
@@ -230,47 +229,29 @@ export class PaymeService {
     };
   }
 
-  private async _findUserAndPlan(userId: string, planId: string, prismaInstance: Prisma.TransactionClient | PrismaClient = prisma) {
-    const user = await prismaInstance.users.findUnique({ where: { id: userId } });
-    if (!user) {
-      console.error(`User not found: ${userId}`);
-      throw this._createError(PaymeError.UserNotFound);
-    }
+  private async _findUserAndPlan(userId: string, planId: string, prismaInstance?: any) {
+    const [user, plan] = await Promise.all([
+      this.userRepo.findById(userId),
+      this.planRepo.findById(planId)
+    ]);
 
-    const plan = await prismaInstance.plans.findUnique({ where: { id: planId } });
-    if (!plan) {
-      console.error(`Plan not found: ${planId}`);
-      throw this._createError(PaymeError.ProductNotFound);
-    }
+    if (!user) throw this._createError(PaymeError.UserNotFound);
+    if (!plan) throw this._createError(PaymeError.ProductNotFound);
 
     return { user, plan };
   }
 
-  private async _findTransaction(transId: string, prismaInstance: Prisma.TransactionClient | PrismaClient = prisma) {
-    const transaction = await prismaInstance.transactions.findUnique({ where: { transId } });
-    if (!transaction) {
-      console.error(`Transaction not found: ${transId}`);
-      throw this._createError(PaymeError.TransactionNotFound, transId);
-    }
-    return transaction;
-  }
-
-  private async _checkAndHandleExpiry(transaction: Transaction, prismaInstance: Prisma.TransactionClient) {
-    const isExpired = DateTime.fromJSDate(transaction.createdAt)
-      .plus({ minutes: TRANSACTION_TIMEOUT_MINUTES }) < DateTime.now();
+  private async _checkAndHandleExpiry(tx: any, prismaTx: any) {
+    const isExpired = DateTime.fromJSDate(tx.createdAt).plus({ minutes: TRANSACTION_TIMEOUT_MINUTES }) < DateTime.now();
 
     if (isExpired) {
-      console.warn(`Transaction ${transaction.transId} has expired.`);
-      await prismaInstance.transactions.update({
-        where: { id: transaction.id },
-        data: {
-          status: 'CANCELED',
-          state: TransactionState.PendingCanceled,
-          cancelTime: new Date(),
-          reason: CancelingReasons.CanceledDueToTimeout,
-        },
-      });
-      return this._createError(PaymeError.CantDoOperation, transaction.transId, 'Transaction timed out');
+      await this.transactionRepo.update(tx.id, {
+        status: PaymentStatus.CANCELED,
+        state: TransactionState.PendingCanceled,
+        cancelTime: new Date(),
+        reason: CancelingReasons.CanceledDueToTimeout,
+      }, prismaTx);
+      return this._createError(PaymeError.CantDoOperation, tx.transId, 'Transaction timed out');
     }
     return null;
   }

@@ -14,24 +14,43 @@ import securityRoutes from './integrations/security/security.routes';
 const app = express();
 const PORT = serverEnv.PORT;
 
-// Enable CORS for all routes
+// Security Headers Middleware
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Content-Security-Policy', "default-src 'self'");
+  next();
+});
+
+// Configure CORS with specific origins in production
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'];
 app.use(cors({
-  origin: '*', // Allow all origins (configure appropriately for production)
-  credentials: true, // Allow cookies and authorization headers
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || serverEnv.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 }));
 
 // Middleware to parse JSON request bodies
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10kb' })); // Limit body size to prevent DoS
 
-// Request logging middleware
+// Request logging middleware (Sanitized)
 app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`${req.method} ${req.path}`);
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
 
 // Basic Health Check Route
 app.get('/', (req: Request, res: Response) => {
-  res.status(200).json({ message: 'Server is running.' });
+  res.status(200).json({ status: 'ok' });
 });
 
 // Payment Integration Routes
@@ -44,10 +63,26 @@ app.use('/auth', authRoutes);
 app.use('/sms', smsRoutes);
 app.use('/security', securityRoutes);
 
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({ message: 'Resource not found' });
+});
+
 // Centralized Error Handling Middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Unhandled server error:', err.stack);
-  res.status(500).send('Something broke!');
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  // Log detailed error server-side
+  console.error(`[${new Date().toISOString()}] Internal Error:`, {
+    message: err.message,
+    stack: serverEnv.NODE_ENV === 'development' ? err.stack : undefined,
+    path: req.path,
+    method: req.method,
+  });
+
+  // Send obfuscated error to client
+  const status = err.status || 500;
+  res.status(status).json({
+    message: status === 500 ? 'An internal server error occurred.' : err.message,
+  });
 });
 
 // Start the server

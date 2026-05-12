@@ -1,20 +1,27 @@
-import { PrismaClient } from '@prisma/client';
 import { serverEnv } from '../../../env';
 import { generateMD5 } from '../../../utils/hashing';
 import { ClickError } from './constants/status-codes';
 import { TransactionActions } from './constants/transaction-actions';
 import { ClickRequestDto } from './dto/click-request.dto';
 import { GenerateMd5HashParams } from './interfaces/generate-prepare-hash.interface';
+import { TransactionRepository } from '../../../repositories/transaction.repository';
+import { UserRepository } from '../../../repositories/user.repository';
+import { PlanRepository } from '../../../repositories/plan.repository';
+import { PaymentStatus, PaymentProvider } from '../../../constants/payment.constants';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export class ClickService {
   private readonly secretKey: string;
+  private transactionRepo = new TransactionRepository();
+  private userRepo = new UserRepository();
+  private planRepo = new PlanRepository();
 
   constructor() {
     this.secretKey = serverEnv.CLICK_SECRET_KEY;
     if (!this.secretKey) {
-      throw new Error('CLICK_SECRET_KEY is not configured in environment variables.');
+      throw new Error('CLICK_SECRET_KEY is not configured.');
     }
   }
 
@@ -33,7 +40,7 @@ export class ClickService {
     }
   }
 
-  private async prepare(clickReqBody: ClickRequestDto) {
+  private async prepare(dto: ClickRequestDto) {
     const {
       click_trans_id: clickTransId,
       service_id: serviceId,
@@ -43,74 +50,52 @@ export class ClickService {
       sign_time: signTime,
       sign_string: signString,
       param2: userId,
-    } = clickReqBody;
+    } = dto;
 
     const signatureError = this._validateSignature(
-      {
-        clickTransId: String(clickTransId),
-        serviceId,
-        secretKey: this.secretKey,
-        merchantTransId: planId,
-        amount,
-        action,
-        signTime,
-      },
+      { clickTransId: String(clickTransId), serviceId, secretKey: this.secretKey, merchantTransId: planId, amount, action, signTime },
       signString,
     );
-    if (signatureError) {
-      return signatureError;
-    }
+    if (signatureError) return signatureError;
 
     const { user, plan, error } = await this._validateTransaction(userId || '', planId || '');
-    if (error) {
-      return error;
-    }
+    if (error) return error;
 
-    const existingTransaction = await prisma.transactions.findFirst({
-      where: {
-        userId: user.id,
-        planId: plan.id,
-        status: { in: ['PAID', 'CANCELED'] },
-      },
+    const existingTx = await this.transactionRepo.findFirst({
+      userId: user.id,
+      planId: plan.id,
+      status: { in: [PaymentStatus.PAID, PaymentStatus.CANCELED] },
     });
 
-    if (existingTransaction) {
-      if (existingTransaction.status === 'PAID') {
-        return { error: ClickError.AlreadyPaid, error_note: 'Already paid' };
-      }
-      if (existingTransaction.status === 'CANCELED') {
-        return { error: ClickError.TransactionCanceled, error_note: 'Transaction is canceled' };
-      }
+    if (existingTx) {
+      if (existingTx.status === PaymentStatus.PAID) return { error: ClickError.AlreadyPaid, error_note: 'Already paid' };
+      if (existingTx.status === PaymentStatus.CANCELED) return { error: ClickError.TransactionCanceled, error_note: 'Transaction is canceled' };
     }
 
-    if (Number(amount) !== plan.price) {
-      return { error: ClickError.InvalidAmount, error_note: 'Invalid amount' };
-    }
+    if (Number(amount) !== plan.price) return { error: ClickError.InvalidAmount, error_note: 'Invalid amount' };
 
     const time = new Date().getTime();
-    const newTransaction = await prisma.transactions.create({
-      data: {
-        plan: { connect: { id: plan.id } },
-        user: { connect: { id: user.id } },
-        transId: String(clickTransId),
-        prepareId: time,
-        status: 'PENDING',
-        provider: 'click',
-        amount: Number(amount),
-        createdAt: new Date(time),
-      },
+    const newTx = await this.transactionRepo.create({
+      plan: { connect: { id: plan.id } },
+      user: { connect: { id: user.id } },
+      transId: String(clickTransId),
+      prepareId: time,
+      status: PaymentStatus.PENDING,
+      provider: PaymentProvider.CLICK,
+      amount: Number(amount),
+      createdAt: new Date(time),
     });
 
     return {
       click_trans_id: clickTransId,
       merchant_trans_id: planId,
-      merchant_prepare_id: newTransaction.prepareId,
+      merchant_prepare_id: newTx.prepareId,
       error: ClickError.Success,
       error_note: 'Success',
     };
   }
 
-  private async complete(clickReqBody: ClickRequestDto) {
+  private async complete(dto: ClickRequestDto) {
     const {
       click_trans_id: clickTransId,
       service_id: serviceId,
@@ -122,79 +107,39 @@ export class ClickService {
       sign_string: signString,
       param2: userId,
       error: clickError,
-    } = clickReqBody;
+    } = dto;
 
     const signatureError = this._validateSignature(
-      {
-        clickTransId: String(clickTransId),
-        serviceId,
-        secretKey: this.secretKey,
-        merchantTransId: planId,
-        merchantPrepareId: prepareId,
-        amount,
-        action,
-        signTime,
-      },
+      { clickTransId: String(clickTransId), serviceId, secretKey: this.secretKey, merchantTransId: planId, merchantPrepareId: prepareId, amount, action, signTime },
       signString,
     );
-    if (signatureError) {
-      return signatureError;
-    }
+    if (signatureError) return signatureError;
 
-    const { user, plan, error: validationError } = await this._validateTransaction(
-      userId || '',
-      planId || '',
-    );
-    if (validationError) {
-      return validationError;
-    }
+    const { user, plan, error: validationError } = await this._validateTransaction(userId || '', planId || '');
+    if (validationError) return validationError;
 
-    const preparedTransaction = await prisma.transactions.findFirst({
-      where: {
-        prepareId: Number(prepareId),
-        userId: user.id,
-        planId: plan.id,
-      },
+    const preparedTx = await this.transactionRepo.findFirst({
+      prepareId: Number(prepareId),
+      userId: user.id,
+      planId: plan.id,
     });
 
-    if (!preparedTransaction) {
-      return {
-        error: ClickError.TransactionNotFound,
-        error_note: 'Transaction not found or invalid merchant_prepare_id',
-      };
-    }
-
-    if (preparedTransaction.status === 'PAID') {
-      return { error: ClickError.AlreadyPaid, error_note: 'Already paid' };
-    }
-
-    if (preparedTransaction.status === 'CANCELED') {
-      return { error: ClickError.TransactionCanceled, error_note: 'Transaction is already canceled' };
-    }
-
-    if (Number(amount) !== plan.price) {
-      return { error: ClickError.InvalidAmount, error_note: 'Invalid amount' };
-    }
+    if (!preparedTx) return { error: ClickError.TransactionNotFound, error_note: 'Transaction not found' };
+    if (preparedTx.status === PaymentStatus.PAID) return { error: ClickError.AlreadyPaid, error_note: 'Already paid' };
+    if (preparedTx.status === PaymentStatus.CANCELED) return { error: ClickError.TransactionCanceled, error_note: 'Transaction already canceled' };
+    if (Number(amount) !== plan.price) return { error: ClickError.InvalidAmount, error_note: 'Invalid amount' };
 
     if (clickError !== 0) {
-      await prisma.transactions.update({
-        where: { id: preparedTransaction.id },
-        data: { status: 'CANCELED' },
-      });
+      await this.transactionRepo.update(preparedTx.id, { status: PaymentStatus.CANCELED });
       return { error: clickError, error_note: 'Transaction failed on Click side' };
     }
 
-    await prisma.transactions.update({
-      where: { id: preparedTransaction.id },
-      data: { status: 'PAID' },
-    });
-
-    // TODO: Implement the business logic for a successful transaction.
+    await this.transactionRepo.update(preparedTx.id, { status: PaymentStatus.PAID });
 
     return {
       click_trans_id: clickTransId,
       merchant_trans_id: planId,
-      merchant_confirm_id: preparedTransaction.id,
+      merchant_confirm_id: preparedTx.id,
       error: ClickError.Success,
       error_note: 'Success',
     };
@@ -203,40 +148,23 @@ export class ClickService {
   private _validateSignature(params: GenerateMd5HashParams, signString: string) {
     const generatedHash = generateMD5(params);
     if (generatedHash !== signString) {
-      return {
-        error: ClickError.SignFailed,
-        error_note: 'Signature validation failed',
-      };
+      return { error: ClickError.SignFailed, error_note: 'Signature validation failed' };
     }
     return null;
   }
 
   private async _validateTransaction(userId: string, planId: string) {
-    // Validate that userId and planId are non-empty strings
-    // Note: Prisma uses string IDs, not MongoDB ObjectId
     if (!userId || !planId || userId.trim() === '' || planId.trim() === '') {
-      return {
-        error: {
-          error: ClickError.UserNotFound,
-          error_note: 'Invalid userId or planId format',
-        },
-      };
+      return { error: { error: ClickError.UserNotFound, error_note: 'Invalid userId or planId format' } };
     }
 
-    const user = await prisma.users.findUnique({ where: { id: userId } });
-    if (!user) {
-      return { error: { error: ClickError.UserNotFound, error_note: 'User not found' } };
-    }
+    const [user, plan] = await Promise.all([
+      this.userRepo.findById(userId),
+      this.planRepo.findById(planId)
+    ]);
 
-    const plan = await prisma.plans.findUnique({ where: { id: planId } });
-    if (!plan) {
-      return {
-        error: {
-          error: ClickError.TransactionNotFound,
-          error_note: 'Plan or product not found',
-        },
-      };
-    }
+    if (!user) return { error: { error: ClickError.UserNotFound, error_note: 'User not found' } };
+    if (!plan) return { error: { error: ClickError.TransactionNotFound, error_note: 'Plan not found' } };
 
     return { user, plan, error: null };
   }

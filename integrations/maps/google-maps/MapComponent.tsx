@@ -10,7 +10,7 @@ interface MapProps {
 // A component that renders a Google Map.
 // @param center The initial center of the map.
 // @param zoom The initial zoom level of the map.
-export const GoogleMapComponent: React.FC<MapProps> = ({
+export const GoogleMapComponent: React.FC<MapProps> = React.memo(({
   center,
   zoom = 12,
 }) => {
@@ -23,4 +23,6 @@ export const GoogleMapComponent: React.FC<MapProps> = ({
       style={{ width: "100%", height: "400px", borderRadius: "10px" }}
     />
   );
-};
+});
+
+GoogleMapComponent.displayName = "GoogleMapComponent";

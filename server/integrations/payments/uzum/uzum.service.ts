@@ -1,6 +1,3 @@
-// @ts-nocheck
-
-import { Prisma, PrismaClient } from '@prisma/client';
 import { serverEnv } from '../../../env';
 import { ErrorStatusCode } from './constants/error-status-codes';
 import { ResponseStatus } from './constants/response-status';
@@ -9,16 +6,24 @@ import { CheckTransactionDto } from './dto/check-transaction.dto';
 import { ConfirmTransactionDto } from './dto/confirm-transaction.dto';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { ReverseTransactionDto } from './dto/reverse-transaction.dto';
+import { TransactionRepository } from '../../../repositories/transaction.repository';
+import { UserRepository } from '../../../repositories/user.repository';
+import { PlanRepository } from '../../../repositories/plan.repository';
+import { PaymentStatus, PaymentProvider } from '../../../constants/payment.constants';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export class UzumService {
   private readonly myServiceId: number;
+  private transactionRepo = new TransactionRepository();
+  private userRepo = new UserRepository();
+  private planRepo = new PlanRepository();
 
   constructor() {
     this.myServiceId = serverEnv.UZUM_SERVICE_ID;
     if (!this.myServiceId) {
-      throw new Error('UZUM_SERVICE_ID is not configured in environment variables.');
+      throw new Error('UZUM_SERVICE_ID is not configured.');
     }
   }
 
@@ -30,11 +35,7 @@ export class UzumService {
       serviceId: dto.serviceId,
       timestamp: new Date().toISOString(),
       status: ResponseStatus.Ok,
-      data: {
-        account: {
-          value: dto.params.planId,
-        },
-      },
+      data: { account: { value: dto.params.planId } },
     };
   }
 
@@ -42,42 +43,28 @@ export class UzumService {
     return prisma.$transaction(async (prismaTx) => {
       this._validateServiceId(dto.serviceId);
 
-      const existingTransaction = await prismaTx.transactions.findUnique({
-        where: { transId: dto.transId },
-      });
-
-      if (existingTransaction) {
-        console.error(`Transaction with transId ${dto.transId} already exists.`);
-        throw this._createErrorResponse(
-          dto.serviceId,
-          ErrorStatusCode.ErrorCheckingPaymentData,
-          `Transaction with transId ${dto.transId} already exists.`
-        );
+      const existingTx = await this.transactionRepo.findByTransId(dto.transId, prismaTx);
+      if (existingTx) {
+        throw this._createErrorResponse(dto.serviceId, ErrorStatusCode.ErrorCheckingPaymentData, 'Transaction already exists');
       }
 
-      const plan = await this._getPlan(dto.params.planId, prismaTx);
-      const user = await this._getUser(dto.params.userId, prismaTx);
+      const [plan, user] = await Promise.all([
+        this._getPlan(dto.params.planId),
+        this._getUser(dto.params.userId)
+      ]);
 
       if (plan.price * 100 !== dto.amount) {
-        const errorMsg = `Invalid amount for plan ${plan.id}. Expected ${plan.price * 100}, got ${dto.amount}`;
-        console.error(errorMsg);
-        throw this._createErrorResponse(
-          dto.serviceId,
-          ErrorStatusCode.ErrorCheckingPaymentData,
-          errorMsg
-        );
+        throw this._createErrorResponse(dto.serviceId, ErrorStatusCode.ErrorCheckingPaymentData, 'Invalid amount');
       }
 
-      await prismaTx.transactions.create({
-        data: {
-          transId: dto.transId,
-          amount: dto.amount,
-          user: { connect: { id: user.id } },
-          status: 'PENDING',
-          provider: 'uzum',
-          plan: { connect: { id: plan.id } },
-        },
-      });
+      await this.transactionRepo.create({
+        transId: dto.transId,
+        amount: dto.amount,
+        user: { connect: { id: user.id } },
+        status: PaymentStatus.PENDING,
+        provider: PaymentProvider.UZUM,
+        plan: { connect: { id: plan.id } },
+      }, prismaTx);
 
       return {
         serviceId: dto.serviceId,
@@ -93,28 +80,16 @@ export class UzumService {
   async confirm(dto: ConfirmTransactionDto) {
     return prisma.$transaction(async (prismaTx) => {
       this._validateServiceId(dto.serviceId);
-      const transaction = await this._getTransaction(dto.transId, prismaTx);
+      const tx = await this._getTransaction(dto.transId, prismaTx);
 
-      if (transaction.status !== 'PENDING') {
-        const errorMsg = `Attempted to confirm an already processed transaction: ${dto.transId}`;
-        console.error(errorMsg);
-        throw this._createErrorResponse(
-          dto.serviceId,
-          ErrorStatusCode.PaymentAlreadyProcessed,
-          errorMsg,
-          dto.transId,
-        );
+      if (tx.status !== PaymentStatus.PENDING) {
+        throw this._createErrorResponse(dto.serviceId, ErrorStatusCode.PaymentAlreadyProcessed, 'Already processed', dto.transId);
       }
 
-      // TODO: Implement your payment processing logic here
-
-      await prismaTx.transactions.update({
-        where: { transId: dto.transId },
-        data: {
-          performTime: new Date(),
-          status: 'PAID',
-        },
-      });
+      await this.transactionRepo.updateByTransId(dto.transId, {
+        performTime: new Date(),
+        status: PaymentStatus.PAID,
+      }, prismaTx);
 
       return {
         serviceId: dto.serviceId,
@@ -128,101 +103,60 @@ export class UzumService {
   async reverse(dto: ReverseTransactionDto) {
     return prisma.$transaction(async (prismaTx) => {
       this._validateServiceId(dto.serviceId);
-      const transaction = await this._getTransaction(dto.transId, prismaTx);
+      const tx = await this._getTransaction(dto.transId, prismaTx);
 
-      await prismaTx.transactions.update({
-        where: { transId: dto.transId },
-        data: {
-          cancelTime: new Date(),
-          status: 'CANCELED',
-        },
-      });
+      await this.transactionRepo.updateByTransId(dto.transId, {
+        cancelTime: new Date(),
+        status: PaymentStatus.CANCELED,
+      }, prismaTx);
 
       return {
         serviceId: dto.serviceId,
         transId: dto.transId,
         status: ResponseStatus.Reversed,
         reverseTime: new Date().toISOString(),
-        amount: transaction.amount,
+        amount: tx.amount,
       };
     });
   }
 
   async status(dto: CheckTransactionStatusDto) {
     this._validateServiceId(dto.serviceId);
-    const transaction = await this._getTransaction(dto.transId);
+    const tx = await this._getTransaction(dto.transId);
     return {
       serviceId: dto.serviceId,
       transId: dto.transId,
-      status: transaction.status,
+      status: tx.status,
     };
   }
 
   private _validateServiceId(serviceId: number) {
     if (serviceId !== this.myServiceId) {
-      const errorMsg = `Invalid serviceId. Expected ${this.myServiceId}, but got ${serviceId}`;
-      console.error(errorMsg);
-      throw this._createErrorResponse(
-        serviceId,
-        ErrorStatusCode.InvalidServiceId,
-        errorMsg
-      );
+      throw this._createErrorResponse(serviceId, ErrorStatusCode.InvalidServiceId, 'Invalid serviceId');
     }
   }
 
-  private async _getPlan(planId: string, prismaInstance: Prisma.TransactionClient | PrismaClient = prisma) {
-    if (!planId || planId.trim() === '') {
-      const errorMsg = `Invalid planId format: ${planId}`;
-      console.error(errorMsg);
-      throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.ErrorCheckingPaymentData, errorMsg);
-    }
-    const plan = await prismaInstance.plans.findUnique({ where: { id: planId } });
-    if (!plan) {
-      const errorMsg = `Plan not found: ${planId}`;
-      console.error(errorMsg);
-      throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.ErrorCheckingPaymentData, errorMsg);
-    }
+  private async _getPlan(planId: string) {
+    if (!planId || planId.trim() === '') throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.ErrorCheckingPaymentData, 'Invalid planId');
+    const plan = await this.planRepo.findById(planId);
+    if (!plan) throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.ErrorCheckingPaymentData, 'Plan not found');
     return plan;
   }
   
-  private async _getUser(userId: string, prismaInstance: Prisma.TransactionClient | PrismaClient = prisma) {
-      if (!userId || userId.trim() === '') {
-          const errorMsg = `Invalid userId format: ${userId}`;
-          console.error(errorMsg);
-          throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.ErrorCheckingPaymentData, errorMsg);
-      }
-      const user = await prismaInstance.users.findUnique({ where: { id: userId } });
-      if (!user) {
-          const errorMsg = `User not found: ${userId}`;
-          console.error(errorMsg);
-          throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.ErrorCheckingPaymentData, errorMsg);
-      }
+  private async _getUser(userId: string) {
+      if (!userId || userId.trim() === '') throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.ErrorCheckingPaymentData, 'Invalid userId');
+      const user = await this.userRepo.findById(userId);
+      if (!user) throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.ErrorCheckingPaymentData, 'User not found');
       return user;
   }
 
-  private async _getTransaction(transId: string, prismaInstance: Prisma.TransactionClient | PrismaClient = prisma) {
-    const transaction = await prismaInstance.transactions.findUnique({
-      where: { transId },
-    });
-    if (!transaction) {
-      const errorMsg = `Transaction not found: ${transId}`;
-      console.error(errorMsg);
-      throw this._createErrorResponse(
-        this.myServiceId,
-        ErrorStatusCode.AdditionalPaymentPropertyNotFound,
-        errorMsg,
-        transId,
-      );
-    }
-    return transaction;
+  private async _getTransaction(transId: string, prismaTx?: any) {
+    const tx = await this.transactionRepo.findByTransId(transId, prismaTx);
+    if (!tx) throw this._createErrorResponse(this.myServiceId, ErrorStatusCode.AdditionalPaymentPropertyNotFound, 'Tx not found', transId);
+    return tx;
   }
 
-  private _createErrorResponse(
-    serviceId: number,
-    errorCode: ErrorStatusCode,
-    errorMessage: string,
-    transId?: string,
-  ) {
+  private _createErrorResponse(serviceId: number, errorCode: ErrorStatusCode, errorMessage: string, transId?: string) {
     return {
       serviceId,
       timestamp: new Date().toISOString(),

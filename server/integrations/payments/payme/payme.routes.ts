@@ -64,8 +64,16 @@ router.post('/', paymeBasicAuthMiddleware, paymeValidationMiddleware, async (req
     try {
         const result = await paymeService.handleTransactionMethods(req.body);
         res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json(error);
+    } catch (error: any) {
+        console.error('[Payme Route Error]:', error);
+        // Payme expects error in the body even for internal failures
+        res.status(200).json({
+            error: {
+                code: -32400, // System error
+                message: 'Internal System Error',
+                data: serverEnv.NODE_ENV === 'development' ? error.message : undefined
+            }
+        });
     }
 });
 
